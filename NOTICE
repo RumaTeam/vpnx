@@ -1,0 +1,45 @@
+VPNX - Visual Pinball for the Nintendo Switch
+Copyright (c) 2026 RumaTeam
+License: GPL-3.0-or-later (see LICENSE). The software is free and is not sold.
+
+VPNX integrates with Ruma (https://github.com/RumaTeam/ruma), the emulation frontend of the same team: Ruma lists the tables and starts
+VPNX as a runner, and the VPNX splash, applet-mode notice and HOME forwarder are made to look and behave like Ruma's. Ruma itself is a
+separate program under its own license; nothing here makes Ruma open source.
+
+This product is built from the following works. Each keeps its own copyright and license; the full texts are in the upstream projects
+and, where they are copied here, in the files themselves.
+
+Visual Pinball (https://github.com/vpinball/vpinball)
+  The player, renderer, physics and plugins (incl. ScoreView). GPL-3.0-or-later; a few inherited files keep the older "MAME-like"
+  license described in its LICENSE. Our changes are patches/vpinball-switch.patch and the files under vpinball/switch/.
+
+PinMAME / libpinmame (https://github.com/vpinball/pinmame)
+  BSD-3-Clause for newer files, the inherited "old MAME" license for the rest: free of charge, never sold, and not to be distributed with
+  illegal ROM images. Our changes are patches/pinmame-*.patch.
+
+libwinevbs (https://github.com/vpinball/libwinevbs) and Wine
+  VBScript. LGPL-2.1-or-later.
+
+bgfx (https://github.com/bkaradzic/bgfx, with the fork used by Visual Pinball) and bgfx.cmake
+  BSD-2-Clause; the bgfx.cmake build files are CC0-1.0.
+
+SDL3 (devkitPro port), SDL3_image, SDL3_ttf (https://libsdl.org)
+  zlib license.
+
+libzip (https://libzip.org) BSD-3-Clause. FreeImage (toxieainc fork) under its GPLv3 option. FreeType, nlohmann/json: their own licenses.
+
+Mesa NVK and nxvk (https://github.com/PalindromicBreadLoaf/nxvk)
+  MIT, with GPL-2.0-or-later parts (compat/nvk_compat.c is GPL-2.0-or-later).
+
+devkitPro, libnx and the switchbrew community
+  The toolchain and system library. The forwarder payload in forwarder/ derives from nx-hbloader (ISC, forwarder/LICENSE.md).
+
+Forwarder code (vpinball/switch/forwarder.cpp, forwarder_structs.h)
+  Mozilla Public License 2.0, originally from dolphin-nx (https://github.com/NaGaa95/dolphin-nx, Source/Core/DolphinSwitch/), here
+  adapted by way of the Ruma frontend, whose forwarder is the same. The MPL requires these two files to keep their notices and their
+  source to stay available to whoever receives the NRO.
+
+Trademarks
+  The names "Ruma" and "VPNX" and their logos (including the tile mark in docs/brand/) are trademarks of RumaTeam. The GPL does not
+  grant any right to use them: forks must use another name and logo. Visual Pinball, PinMAME and Nintendo belong to their owners, and
+  VPNX is not affiliated with or endorsed by them.

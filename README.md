@@ -353,6 +353,11 @@ points to the exact commit of this repository, and the upstream code is fetched 
 
 The NRO is free and must stay free. The donation link (Ko-fi) is voluntary and unlocks nothing.
 
+Copies and forks are welcome under the GPL: they must keep the copyright notices, state their changes, stay under the same license and
+ship their source. The names **Ruma** and **VPNX** and their logos (including the tile mark in `docs/brand/`) are trademarks of RumaTeam
+and are not covered by the GPL: a fork has to use another name and logo. VPNX integrates with [Ruma](https://github.com/RumaTeam/ruma)
+(a separate program under its own license). `NOTICE` lists the origin and license of every part.
+
 What is combined into it, each part under its own license (see each project for the full text):
 
 | Component | License |

@@ -1270,11 +1270,12 @@ index fbfdec4..02c53b6 100644
                    << (pair.second.lengths * 1e-3) << "ms (total)\n";
 diff --git a/switch/forwarder.cpp b/switch/forwarder.cpp
 new file mode 100644
-index 0000000..e7a2b86
+index 0000000..ae44cdf
 --- /dev/null
 +++ b/switch/forwarder.cpp
-@@ -0,0 +1,1474 @@
+@@ -0,0 +1,1475 @@
 +// Cria o forwarder do VPNX: um título instalado no cartão SD que abre o VPNX em modo Aplicação (ícone na lista de jogos do HOME).
++// (The same mechanism as the Ruma frontend's forwarder, RumaTeam: VPNX integrates with Ruma and both offer it alike.)
 +//
 +// Origem: Source/Core/DolphinSwitch/Forwarder.cpp do dolphin-nx (https://github.com/NaGaa95/dolphin-nx), MPL-2.0, adaptado:
 +// sem a parte do Dolphin (SDL, atalhos de jogo, forwarders legados) e com o título fixo do VPNX. O programa do título é o payload
@@ -3039,14 +3040,16 @@ index 0000000..cea5018
 +};
 diff --git a/switch/frontend.cpp b/switch/frontend.cpp
 new file mode 100644
-index 0000000..bae6c65
+index 0000000..74d62e6
 --- /dev/null
 +++ b/switch/frontend.cpp
-@@ -0,0 +1,1382 @@
+@@ -0,0 +1,1384 @@
 +// license:GPLv3+
 +// Copyright (c) 2026 RumaTeam
 +// VPNX table browser (standalone mode). See frontend.h. Visual language and tokens: docs/VPNX_WIREFRAME.md (same skeleton as Ruma),
 +// reduced to what the VPNX needs: a list with a detail panel, a grid of screenshots, favourites and the time played.
++// VPNX integrates with Ruma (RumaTeam), the emulation frontend: the splash, the applet-mode notice and the HOME forwarder here follow
++// Ruma's, so that both apps look and behave alike. With Ruma the frontend is Ruma's and this one is not used.
 +#include "forwarder.h"
 +#include "frontend.h"
 +
