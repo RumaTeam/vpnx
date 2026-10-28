@@ -1,0 +1,11 @@
+{
+  "id": "vpnx",
+  "name": "VPNX (Visual Pinball)",
+  "level": 3,
+  "nro": "/ruma/runners/vpnx/vpnx.nro",
+  "systems": ["pinball"],
+  "extensions": ["vpx"],
+  "argv": "{nro} --rom {rom} --session {session}",
+  "options": "options.json",
+  "config": { "format": "session" }
+}

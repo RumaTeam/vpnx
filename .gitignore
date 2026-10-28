@@ -1,0 +1,32 @@
+# third-party clones and build products (recreated by the build-*.sh scripts)
+build/
+external/
+prefix/
+pinmame/
+vpinball/
+
+# Switch binaries
+*.nro
+*.nacp
+*.elf
+*.nso
+*.pfs0
+*.nsp
+# ...except the forwarder payload the NRO embeds in its romfs (built by forwarder/Makefile)
+!romfs/forwarder/*
+
+# user content that must never be committed: tables, ROM sets, saves, logs
+*.vpx
+*.vpxtool
+*.zip
+*.rom
+roms/
+*.log
+nxlink.log
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+*~
+*.swp

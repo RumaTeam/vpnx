@@ -1,0 +1,33 @@
+diff --git a/src/video/switch/SDL_switchvideo.c b/src/video/switch/SDL_switchvideo.c
+index 8742877..365ed0d 100644
+--- a/src/video/switch/SDL_switchvideo.c
++++ b/src/video/switch/SDL_switchvideo.c
+@@ -242,7 +242,8 @@ static bool SWITCH_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_
+         return SDL_SetError("Switch only supports one window");
+     }
+ 
+-    if (!_this->egl_data) {
++    // EGL is only set up (SDL_GL_LoadLibrary) for OpenGL windows; other windows do not need it.
++    if ((window->flags & SDL_WINDOW_OPENGL) && !_this->egl_data) {
+         return SDL_SetError("EGL not initialized");
+     }
+ 
+@@ -258,9 +259,15 @@ static bool SWITCH_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_
+         return SDL_SetError("Could not set NWindow dimensions: 0x%x", rc);
+     }
+ 
+-    window_data->egl_surface = SDL_EGL_CreateSurface(_this, window, nWindow);
+-    if (window_data->egl_surface == EGL_NO_SURFACE) {
+-        return SDL_SetError("Could not create GLES window surface");
++    // The default NWindow can only back one surface producer. Only claim it with an EGL surface when
++    // the application asked SDL for an OpenGL window; a renderer that manages its own surface on the
++    // NWindow (bgfx EGL, Vulkan through VK_NN_vi_surface) creates the window without SDL_WINDOW_OPENGL.
++    window_data->egl_surface = EGL_NO_SURFACE;
++    if (window->flags & SDL_WINDOW_OPENGL) {
++        window_data->egl_surface = SDL_EGL_CreateSurface(_this, window, nWindow);
++        if (window_data->egl_surface == EGL_NO_SURFACE) {
++            return SDL_SetError("Could not create GLES window surface");
++        }
+     }
+ 
+     /* Setup driver data for this window */

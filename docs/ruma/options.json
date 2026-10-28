@@ -1,0 +1,737 @@
+{
+  "groups": [
+    {
+      "id": "view",
+      "label": "VISTA E MESA"
+    },
+    {
+      "id": "gfx",
+      "label": "QUALIDADE GRÁFICA"
+    },
+    {
+      "id": "perf",
+      "label": "DESEMPENHO"
+    },
+    {
+      "id": "ball",
+      "label": "BOLA"
+    },
+    {
+      "id": "audio",
+      "label": "ÁUDIO"
+    },
+    {
+      "id": "ctrl",
+      "label": "CONTROLES E VIBRAÇÃO"
+    },
+    {
+      "id": "dmd",
+      "label": "PLACAR (DMD)"
+    }
+  ],
+  "options": [
+    {
+      "id": "view",
+      "group": "view",
+      "label": "Vista da câmera",
+      "type": "enum",
+      "values": [
+        "auto",
+        "desktop",
+        "cabinet",
+        "fss"
+      ],
+      "labels": [
+        "Definida pela mesa",
+        "Desktop",
+        "Cabinet (topo à direita)",
+        "Tela única"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "cabinet_fit",
+      "group": "view",
+      "label": "Ajuste automático (cabinet)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "manual",
+        "table",
+        "screen"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Manual",
+        "Ajustar à mesa",
+        "Ajustar à tela"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "cabinet_pos",
+      "group": "view",
+      "label": "Posição dos flippers na tela (cabinet)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "0.025",
+        "0.05",
+        "0.1",
+        "0.15",
+        "0.2"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "0% (base da tela)",
+        "2,5%",
+        "5% (padrão)",
+        "10%",
+        "15%",
+        "20% (mais acima)"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "mirror",
+      "group": "view",
+      "label": "Espelhar a mesa (esquerda ↔ direita)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "aa",
+      "group": "gfx",
+      "label": "Suavização por resolução (AA da cena)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0.5",
+        "0.75",
+        "1",
+        "1.25",
+        "1.5",
+        "2"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "50% (mais rápido)",
+        "75%",
+        "100% (nativo)",
+        "125%",
+        "150%",
+        "200% (mais pesado)"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "msaa",
+      "group": "gfx",
+      "label": "MSAA",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "4 amostras",
+        "6 amostras",
+        "8 amostras"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "fxaa",
+      "group": "gfx",
+      "label": "Antialiasing pós-processado",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "FXAA rápido",
+        "FXAA padrão",
+        "FXAA qualidade",
+        "NFAA rápido",
+        "DLAA padrão",
+        "SMAA qualidade",
+        "FAAA qualidade"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "sharpen",
+      "group": "gfx",
+      "label": "Nitidez pós-processada",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "1",
+        "2"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligada",
+        "CAS",
+        "CAS bilateral"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "ao",
+      "group": "gfx",
+      "label": "Oclusão de ambiente (sombras de contato)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "static",
+        "dynamic"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligada",
+        "Estática",
+        "Dinâmica"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "reflections",
+      "group": "gfx",
+      "label": "Reflexos do tampo",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligados",
+        "Só bolas",
+        "Só estáticos",
+        "Estáticos e bolas",
+        "Estáticos e dinâmicos",
+        "Dinâmicos (melhor qualidade)"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "ssr",
+      "group": "gfx",
+      "label": "Reflexo em espaço de tela",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "bloom",
+      "group": "gfx",
+      "label": "Bloom (brilho das luzes)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "on",
+        "off"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Ligado",
+        "Desligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "motion_blur",
+      "group": "gfx",
+      "label": "Desfoque de movimento da bola",
+      "type": "enum",
+      "values": [
+        "auto",
+        "on",
+        "off"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Ligado",
+        "Desligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "aniso",
+      "group": "gfx",
+      "label": "Filtragem anisotrópica",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "max_tex",
+      "group": "gfx",
+      "label": "Tamanho máximo das texturas",
+      "type": "enum",
+      "values": [
+        "auto",
+        "512",
+        "1024",
+        "1536",
+        "2048",
+        "4096"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "512 px (mais leve)",
+        "1024 px",
+        "1536 px",
+        "2048 px",
+        "4096 px"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "detail",
+      "group": "gfx",
+      "label": "Detalhe de bolas e rampas",
+      "type": "enum",
+      "values": [
+        "auto",
+        "3",
+        "5",
+        "7",
+        "10"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Baixo",
+        "Médio",
+        "Alto",
+        "Máximo"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "compress_tex",
+      "group": "gfx",
+      "label": "Comprimir texturas ao iniciar (lento)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "cache",
+      "group": "gfx",
+      "label": "Cache de carregamento",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "preload"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Pré-carregar texturas"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "sync",
+      "group": "perf",
+      "label": "Sincronização de quadros",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Sem sincronia",
+        "Sincronia vertical",
+        "Adaptativa",
+        "Frame pacing"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "fps_limit",
+      "group": "perf",
+      "label": "Limite de quadros",
+      "type": "enum",
+      "values": [
+        "auto",
+        "display",
+        "none",
+        "20",
+        "30",
+        "45",
+        "60"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Taxa da tela",
+        "Sem limite",
+        "20 FPS",
+        "30 FPS",
+        "45 FPS",
+        "60 FPS"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "prerender",
+      "group": "perf",
+      "label": "Quadros pré-renderizados (Vulkan)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "1",
+        "2",
+        "3"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "1 (menor latência)",
+        "2",
+        "3 (mais fluidez)"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "fps_overlay",
+      "group": "perf",
+      "label": "Indicador de desempenho",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "fps",
+        "full"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "FPS",
+        "Completo"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "clock",
+      "group": "perf",
+      "label": "Clocks do console",
+      "type": "enum",
+      "values": [
+        "default",
+        "stock",
+        "max"
+      ],
+      "labels": [
+        "Seguro por modo (recomendado)",
+        "Originais do homebrew",
+        "GPU no máximo (teste)"
+      ],
+      "default": "default"
+    },
+    {
+      "id": "ball_stretch",
+      "group": "ball",
+      "label": "Corrigir bola esticada",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "ball_lighting",
+      "group": "ball",
+      "label": "Iluminação e reflexos na bola",
+      "type": "enum",
+      "values": [
+        "auto",
+        "on",
+        "off"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Ligados",
+        "Desligados"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "ball_trail",
+      "group": "ball",
+      "label": "Rastro da bola (legado)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "music_volume",
+      "group": "audio",
+      "label": "Volume do backglass (música)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "20",
+        "40",
+        "60",
+        "80",
+        "100"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "0%",
+        "20%",
+        "40%",
+        "60%",
+        "80%",
+        "100%"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "sound_volume",
+      "group": "audio",
+      "label": "Volume do tampo (sons mecânicos)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "20",
+        "40",
+        "60",
+        "80",
+        "100"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "0%",
+        "20%",
+        "40%",
+        "60%",
+        "80%",
+        "100%"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "nudge_visual",
+      "group": "ctrl",
+      "label": "Tremor visual do nudge",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0",
+        "0.5",
+        "1",
+        "1.5",
+        "2"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "0% (sem tremor)",
+        "50%",
+        "100%",
+        "150%",
+        "200%"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "plumb",
+      "group": "ctrl",
+      "label": "Pêndulo de tilt (simulação)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "tilt_threshold",
+      "group": "ctrl",
+      "label": "Limite do tilt (maior = mais difícil dar tilt)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0.5",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "0,5°",
+        "1° (padrão)",
+        "2°",
+        "3°",
+        "4°"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "plunger_retract",
+      "group": "ctrl",
+      "label": "Retrair o êmbolo após 1 s (botão)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligado",
+        "Ligado"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "rumble",
+      "group": "ctrl",
+      "label": "Vibração",
+      "type": "enum",
+      "values": [
+        "auto",
+        "off",
+        "on"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Desligada",
+        "Ligada (mesa e genérica)"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "rumble_strength",
+      "group": "ctrl",
+      "label": "Intensidade da vibração",
+      "type": "enum",
+      "values": [
+        "auto",
+        "0.5",
+        "1",
+        "1.5",
+        "2",
+        "3"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "50%",
+        "100% (padrão)",
+        "150%",
+        "200%",
+        "300%"
+      ],
+      "default": "auto"
+    },
+    {
+      "id": "dmd",
+      "group": "dmd",
+      "label": "DMD (ScoreView)",
+      "type": "enum",
+      "values": [
+        "auto",
+        "on",
+        "off"
+      ],
+      "labels": [
+        "Como no menu do jogo",
+        "Ligado",
+        "Desligado"
+      ],
+      "default": "auto"
+    }
+  ]
+}

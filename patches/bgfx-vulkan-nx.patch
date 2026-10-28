@@ -1,0 +1,217 @@
+--- a/bgfx/src/renderer_vk.cpp
++++ b/bgfx/src/renderer_vk.cpp
+@@ -17,6 +17,38 @@
+ #	import <Metal/Metal.h>
+ #endif // BX_PLATFORM_OSX
+ 
++#if BX_PLATFORM_NX
++// Nintendo Switch: the Vulkan driver (nxvk, Mesa's NVK) is linked statically, there is no libvulkan to dlopen and no
++// loader. Its entry point is the ICD one, and the few functions the loader normally provides are stood in for here.
++extern "C" PFN_vkVoidFunction VKAPI_CALL vk_icdGetInstanceProcAddr(VkInstance _instance, const char* _name);
++
++namespace bgfx { namespace vk
++{
++	static VkInstance s_nxInstance = VK_NULL_HANDLE;
++
++	static PFN_vkVoidFunction VKAPI_CALL nxGetDeviceProcAddr(VkDevice _device, const char* _name)
++	{
++		// vkGetDeviceProcAddr itself is an instance level function of the ICD
++		PFN_vkGetDeviceProcAddr getDeviceProcAddr = (PFN_vkGetDeviceProcAddr)vk_icdGetInstanceProcAddr(s_nxInstance, "vkGetDeviceProcAddr");
++		return NULL != getDeviceProcAddr ? getDeviceProcAddr(_device, _name) : NULL;
++	}
++
++	static VkResult VKAPI_CALL nxEnumerateInstanceLayerProperties(uint32_t* _count, VkLayerProperties*)
++	{
++		*_count = 0; // layers are a loader feature
++		return VK_SUCCESS;
++	}
++
++	static void* nxLoaderSymbol(const char* _name)
++	{
++		if (0 == bx::strCmp(_name, "vkGetInstanceProcAddr") )           { return (void*)vk_icdGetInstanceProcAddr; }
++		if (0 == bx::strCmp(_name, "vkGetDeviceProcAddr") )             { return (void*)nxGetDeviceProcAddr; }
++		if (0 == bx::strCmp(_name, "vkEnumerateInstanceLayerProperties") ) { return (void*)nxEnumerateInstanceLayerProperties; }
++		return (void*)vk_icdGetInstanceProcAddr(VK_NULL_HANDLE, _name);
++	}
++} }
++#endif // BX_PLATFORM_NX
++
+ namespace bgfx { namespace vk
+ {
+ 	static char s_viewName[BGFX_CONFIG_MAX_VIEWS][BGFX_CONFIG_MAX_VIEW_NAME];
+@@ -1375,6 +1407,11 @@
+ 				|| NULL != findModule("Nvda.Graphics.Interception.dll")
+ 				);
+ 
++#if BX_PLATFORM_NX
++			m_vulkan1Dll = (void*)&s_nxInstance; // statically linked driver: any non-NULL handle
++			BX_UNUSED(m_vulkan1Dll);
++			if (false)
++#endif // BX_PLATFORM_NX
+ 			m_vulkan1Dll = bx::dlopen(
+ #if BX_PLATFORM_WINDOWS
+ 				"vulkan-1.dll"
+@@ -1398,9 +1435,14 @@
+ 			BX_TRACE("Shared library functions:");
+ 
+ #define VK_IMPORT_FUNC(_optional, _func)                                 \
+-	_func = (PFN_##_func)bx::dlsym(m_vulkan1Dll, #_func);                \
++	_func = (PFN_##_func)NX_OR_DLSYM(#_func);                            \
+ 	BX_TRACE("\t%16p %s" #_func, _func, _optional ? "[opt]" : "     ");  \
+ 	imported &= _optional || NULL != _func
++#if BX_PLATFORM_NX
++#	define NX_OR_DLSYM(_name) nxLoaderSymbol(_name)
++#else
++#	define NX_OR_DLSYM(_name) bx::dlsym(m_vulkan1Dll, _name)
++#endif // BX_PLATFORM_NX
+ VK_IMPORT
+ #undef VK_IMPORT_FUNC
+ 
+@@ -1556,6 +1598,9 @@
+ 					goto error;
+ 				}
+ 
++#if BX_PLATFORM_NX
++				s_nxInstance = m_instance;
++#endif // BX_PLATFORM_NX
+ 				m_instanceApiVersion = vulkanApiVersionSelector;
+ 
+ 				BX_TRACE("Instance API version: %d.%d.%d"
+@@ -1619,6 +1664,12 @@
+ 					goto error;
+ 				}
+ 
++				if (0 == numPhysicalDevices)
++				{
++					BX_TRACE("Init error: no Vulkan physical device found.");
++					goto error;
++				}
++
+ 				VkPhysicalDevice physicalDevices[4];
+ 				numPhysicalDevices = bx::min<uint32_t>(numPhysicalDevices, BX_COUNTOF(physicalDevices) );
+ 				result = vkEnumeratePhysicalDevices(m_instance
+@@ -1742,6 +1793,13 @@
+ 
+ 				bx::memCopy(&s_extension[0], &physicalDeviceExtensions[physicalDeviceIdx][0], sizeof(s_extension) );
+ 
++#if BX_PLATFORM_NX
++				// NVK advertises VK_KHR_present_id/present_wait, but vkWaitForPresentKHR cannot be obtained through the ICD entry point
++				// (it comes back NULL and waitForSwapchain() jumped to address 0). Without them the frame pacing is done in software.
++				s_extension[Extension::KHR_present_id  ].m_supported = false;
++				s_extension[Extension::KHR_present_wait].m_supported = false;
++#endif // BX_PLATFORM_NX
++
+ 				if ( s_extension[Extension::EXT_swapchain_maintenance1].m_supported
+ 				&& (!s_extension[Extension::EXT_surface_maintenance1  ].m_supported || !s_extension[Extension::KHR_get_surface_capabilities2].m_supported)
+ 				   )
+@@ -2536,7 +2594,11 @@
+ 				[[fallthrough]];
+ 
+ 			case ErrorState::LoadedVulkan1:
+-				bx::dlclose(m_vulkan1Dll);
++#if !BX_PLATFORM_NX
++	#if !BX_PLATFORM_NX
++			bx::dlclose(m_vulkan1Dll);
++#endif // !BX_PLATFORM_NX
++#endif // !BX_PLATFORM_NX
+ 				m_vulkan1Dll  = NULL;
+ 				m_allocatorCb = NULL;
+ 				unloadRenderDoc(m_renderDocDll);
+@@ -10892,6 +10954,7 @@
+ 
+ 						if (NULL != vcb)
+ 						{
++							BGFX_PROFILER_SCOPE("vk/commit uniforms", 0xffffff40);
+ 							commit(*vcb);
+ 						}
+ 
+@@ -10946,6 +11009,7 @@
+ 							DescriptorSetMap::const_iterator it = m_descriptorSetMap.find(bindHash);
+ 							if (it == m_descriptorSetMap.end() )
+ 							{
++								BGFX_PROFILER_SCOPE("vk/getDescriptorSet (cache miss)", 0xffff4040);
+ 								VkDescriptorSet descriptorSet = getDescriptorSet(
+ 									  program
+ 									, renderBind
+@@ -11123,6 +11187,7 @@
+ 					{
+ 						const bool depthClamp = depthControl.m_depthClamp;
+ 
++						BGFX_PROFILER_SCOPE("vk/getPipeline", 0xff40a0ff);
+ 						pipeline = getPipeline(state
+ 							, draw.m_rgba
+ 							, stencil
+@@ -11154,6 +11219,7 @@
+ 					if (currentPipeline != pipeline)
+ 					{
+ 						currentPipeline = pipeline;
++						BGFX_PROFILER_SCOPE("vk/vkCmdBindPipeline", 0xff40ffff);
+ 						vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+ 					}
+ 
+@@ -11242,6 +11308,7 @@
+ 						UniformBuffer* vcb = program.m_vsh->m_constantBuffer;
+ 						if (NULL != vcb)
+ 						{
++							BGFX_PROFILER_SCOPE("vk/commit uniforms", 0xffffff40);
+ 							commit(*vcb);
+ 						}
+ 
+@@ -11250,6 +11317,7 @@
+ 							UniformBuffer* fcb = program.m_fsh->m_constantBuffer;
+ 							if (NULL != fcb)
+ 							{
++								BGFX_PROFILER_SCOPE("vk/commit uniforms", 0xffffff40);
+ 								commit(*fcb);
+ 							}
+ 						}
+@@ -11264,7 +11332,7 @@
+ 					{
+ 						uint32_t ref = (draw.m_stateFlags & BGFX_STATE_ALPHA_REF_MASK) >> BGFX_STATE_ALPHA_REF_SHIFT;
+ 						viewState.m_alphaRef = ref / 255.0f;
+-						viewState.setPredefined<4>(this, view, program, _render, draw);
++						{ BGFX_PROFILER_SCOPE("vk/setPredefined", 0xffff40ff); viewState.setPredefined<4>(this, view, program, _render, draw); }
+ 					}
+ 
+ 					if (VK_NULL_HANDLE != program.m_descriptorSetLayout)
+@@ -11306,6 +11374,7 @@
+ 							DescriptorSetMap::const_iterator it = m_descriptorSetMap.find(bindHash);
+ 							if (it == m_descriptorSetMap.end() )
+ 							{
++								BGFX_PROFILER_SCOPE("vk/getDescriptorSet (cache miss)", 0xffff4040);
+ 								VkDescriptorSet descriptorSet = getDescriptorSet(
+ 									  program
+ 									, renderBind
+@@ -11324,6 +11393,8 @@
+ 							}
+ 						}
+ 
++						{
++						BGFX_PROFILER_SCOPE("vk/vkCmdBindDescriptorSets", 0xff40ff40);
+ 						vkCmdBindDescriptorSets(
+ 							  m_commandBuffer
+ 							, VK_PIPELINE_BIND_POINT_GRAPHICS
+@@ -11334,6 +11405,7 @@
+ 							, numOffsets
+ 							, sbo.offsets
+ 							);
++						}
+ 					}
+ 
+ 					VkBuffer bufferIndirect = VK_NULL_HANDLE;
+@@ -11400,6 +11472,7 @@
+ 						}
+ 						else
+ 						{
++							BGFX_PROFILER_SCOPE("vk/vkCmdDraw", 0xffffa040);
+ 							vkCmdDraw(
+ 								  m_commandBuffer
+ 								, numVertices
+@@ -11464,6 +11537,7 @@
+ 						}
+ 						else
+ 						{
++							BGFX_PROFILER_SCOPE("vk/vkCmdDrawIndexed", 0xffffa040);
+ 							vkCmdDrawIndexed(
+ 								  m_commandBuffer
+ 								, numIndices

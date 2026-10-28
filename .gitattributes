@@ -1,0 +1,2 @@
+# patches carry the exact bytes of upstream files (some use CRLF): never normalise them
+*.patch -text

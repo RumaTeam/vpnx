@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VPNX — mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-app:#0B0E13; --bg-chrome:#0F1319; --bg-panel:#10141A; --bg-card:#151A21;
+  --bg-control:#171C24; --bg-button:#1A2029; --bg-zebra:#0E1218; --line:#1E252F;
+  --glyph-bg:#2A323E; --text-hi:#FFFFFF; --text:#E6EAF0; --text-row:#D5DBE4;
+  --text-mid:#AEB6C2; --text-dim:#8C96A5; --text-label:#7A8494; --text-off:#3F4856;
+  --accent:#FFB020; --on-accent:#1A1000; --sel-bg:#E6EAF0; --sel-text:#0B0E13;
+  --star:#F5B544; --star-sel:#A86A00; --warn:#FF8A6B; --placeholder:#1E1626;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#06080B;font-family:'Barlow Semi Condensed',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 0}
+.screen-label{width:1280px;font-size:13px;color:var(--text-label);letter-spacing:.08em;margin-bottom:-28px}
+.screen{width:1280px;height:720px;display:flex;flex-direction:column;background:var(--bg-app);overflow:hidden}
+button{all:unset;box-sizing:border-box;cursor:pointer}
+.mono{font-family:'JetBrains Mono',monospace}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--glyph-bg);color:var(--text);font:600 11px 'Barlow Semi Condensed',sans-serif}
+.g.on{background:var(--accent);color:var(--on-accent)}
+.g.inv{background:var(--on-accent);color:#fff}
+.g.dark{background:var(--sel-text);color:#fff}
+
+/* cabeçalho */
+header{height:36px;flex:none;display:flex;align-items:center;gap:18px;padding:0 14px;background:var(--bg-chrome);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:7px}
+.logo span{font-family:'Unbounded',sans-serif;font-weight:700;font-size:15px;color:#fff;letter-spacing:-.01em}
+.tabs{display:flex;align-items:center;gap:4px}
+.tabs a{padding:4px 10px;color:#9AA4B2;font-size:13px;text-decoration:none;border-radius:4px}
+.tabs a.on{background:#1F2630;color:#fff;font-weight:600}
+.search{display:flex;align-items:center;gap:6px;height:24px;width:200px;padding:0 10px;border-radius:12px;background:var(--bg-control);color:var(--text-dim);font-size:12px}
+.mode{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--text-dim);border:1px solid var(--glyph-bg);border-radius:3px;padding:1px 6px}
+.bat{display:flex;align-items:center;gap:5px;font-size:13px}
+.pill{display:flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:12px;background:var(--bg-control);color:#C3CAD5;font-size:12px;font-weight:600}
+.avatar{width:22px;height:22px;border-radius:11px;background:#8F5A1F;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.crumb{display:flex;align-items:center;gap:8px;font-size:13px;color:#9AA4B2}
+.crumb a{color:#9AA4B2;text-decoration:none}
+.crumb b{color:#fff;font-weight:600}
+
+/* rodapé */
+footer{height:32px;flex:none;display:flex;align-items:center;gap:16px;padding:0 14px;background:var(--bg-chrome);border-top:1px solid var(--line);font-size:12px;color:var(--text-mid)}
+footer .hint{display:flex;align-items:center;gap:5px}
+footer .hint.main{color:#fff;font-weight:600}
+
+.body{flex:1;min-height:0;display:flex}
+
+/* trilho A–Z */
+.rail{width:40px;flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 0;background:var(--bg-chrome);border-right:1px solid var(--line)}
+.rail button{width:24px;height:19px;display:flex;align-items:center;justify-content:center;border-radius:4px;font:600 11px 'Barlow Semi Condensed',sans-serif;color:var(--text-mid)}
+.rail button.on{background:var(--accent);color:var(--on-accent)}
+.rail button:disabled{color:var(--text-off);cursor:default}
+
+/* lista */
+.list{flex:1;min-width:0;display:flex;flex-direction:column}
+.titlebar{height:44px;flex:none;display:flex;align-items:center;gap:12px;padding:0 14px;border-bottom:1px solid var(--line)}
+.titlebar h1{margin:0;font-size:20px;font-weight:700}
+.chips{display:flex;gap:4px;font-size:12px}
+.chip{padding:3px 9px;border-radius:11px;background:var(--bg-control);color:var(--text-mid)}
+.chip.on{background:var(--text);color:var(--bg-app);font-weight:600}
+.cols{display:grid;grid-template-columns:22px minmax(0,1fr) 78px 36px 30px 72px 28px 28px 28px 30px 56px 84px;column-gap:8px;align-items:center;padding:0 12px}
+.cols .r{text-align:right}
+.colhead{height:24px;flex:none;font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text-label);border-bottom:1px solid var(--line)}
+.rows{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.row{height:24px;font-size:13px;color:var(--text-row)}
+.row:nth-child(even){background:var(--bg-zebra)}
+.row:hover{background:var(--bg-button)}
+.row .d{color:var(--text-dim)}
+.row .m{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim)}
+.row .warn{color:var(--warn)}
+.row .star{color:var(--star)}
+.row.sel{background:var(--sel-bg);color:var(--sel-text);font-weight:600;box-shadow:inset 3px 0 0 var(--accent)}
+.row.sel .d,.row.sel .m,.row.sel .warn{color:var(--sel-text)}
+.row.sel .star{color:var(--star-sel)}
+.scroll{position:absolute;right:3px;top:150px;width:4px;height:30px;border-radius:2px;background:#3A4350}
+
+/* painel */
+.panel{width:420px;flex:none;display:flex;flex-direction:column;gap:10px;padding:14px;background:var(--bg-panel);border-left:1px solid var(--line)}
+.shot{position:relative;flex:none;border-radius:6px;overflow:hidden;background:var(--placeholder);box-shadow:0 8px 22px rgba(0,0,0,.45)}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.shot .pf{position:absolute;inset:0;background:#3A1E22;clip-path:polygon(38% 0,62% 0,82% 100%,18% 100%)}
+.shot .lbl{position:absolute;font-family:'JetBrains Mono',monospace;font-size:10px;color:#C9B4D8}
+.flip{position:absolute;height:8px;border-radius:4px;background:var(--text)}
+.ball{position:absolute;border-radius:50%;background:var(--text-row)}
+.tag{font-size:11px;font-weight:600;padding:2px 6px;border-radius:3px}
+.tag.fav{background:#2B2417;color:#F5C873}
+.tag.info{background:#1D2733;color:#A9C6E8}
+.meta{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr);row-gap:6px;column-gap:10px;font-size:12px}
+.meta .k{color:var(--text-label)}
+.meta .v.m{font-family:'JetBrains Mono',monospace;font-size:11px}
+.scores{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-radius:6px;background:var(--bg-card)}
+.scores .hd{display:flex;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--text-label)}
+.scores .ln{display:flex;justify-content:space-between;font-size:12px}
+.btn-play{height:44px;border-radius:6px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700}
+.btn{height:44px;border-radius:6px;background:var(--bg-button);color:var(--text-row);display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600}
+
+/* opções */
+.side{width:360px;flex:none;display:flex;flex-direction:column;gap:12px;padding:16px;background:var(--bg-panel);border-right:1px solid var(--line)}
+.side h1{margin:2px 0 0;font-size:24px;font-weight:700;line-height:1.05}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);row-gap:5px;column-gap:10px;font-size:12px}
+.kv .k{color:var(--text-label)}
+.opts{flex:1;min-width:0;display:flex;flex-direction:column;padding:4px 18px 12px;overflow:hidden}
+.optbar{display:flex;align-items:center;gap:6px;padding:10px 14px 0;font-size:12px}
+.sec{margin:14px 0 4px;padding:0 14px;font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text-label)}
+.opt{display:grid;grid-template-columns:minmax(0,1fr) 300px;align-items:center;column-gap:16px;height:38px;padding:0 14px;border-radius:5px;font-size:14px;color:var(--text-row)}
+.opt:hover{background:var(--bg-button)}
+.opt .val{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--text-mid)}
+.opt.sel{background:var(--sel-bg);color:var(--sel-text);font-weight:600;box-shadow:inset 3px 0 0 var(--accent)}
+.opt.sel .val{color:var(--sel-text)}
+.slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-mid)}
+.track{flex:1;height:4px;border-radius:2px;background:var(--glyph-bg);position:relative}
+.track i{position:absolute;left:0;top:0;height:4px;border-radius:2px;background:var(--accent)}
+.track b{position:absolute;top:-5px;width:14px;height:14px;border-radius:7px;background:var(--text);margin-left:-7px}
+</style>
+</head>
+<body>
+
+<!-- ============ TELA 1: LISTA DE MESAS ============ -->
+<div class="screen-label">LISTA DE MESAS · 1280×720</div>
+<div class="screen" id="lista">
+  <header>
+    <div class="logo">
+      <svg width="18" height="18" viewBox="0 0 18 18" role="img" aria-label="VPNX"><circle cx="9" cy="9" r="7.5" fill="#FFB020"/><circle cx="6.4" cy="6.2" r="2.1" fill="#fff" opacity=".85"/></svg>
+      <span>vpnx</span>
+    </div>
+    <nav class="tabs" aria-label="Abas">
+      <span class="g">L</span>
+      <a href="#" class="on">Mesas</a><a href="#">Recentes</a><a href="#">Favoritas</a><a href="#">Recordes</a><a href="#">Coleções</a>
+      <span class="g">R</span>
+    </nav>
+    <div style="flex:1"></div>
+    <button class="search" aria-label="Buscar">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      Buscar em 1.142 mesas<span style="flex:1"></span><span class="g">−</span>
+    </button>
+    <span class="mode">PORTÁTIL · 720p</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C3CAD5" stroke-width="2.2" stroke-linecap="round" role="img" aria-label="Wi-Fi"><path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".8" fill="#C3CAD5"/></svg>
+    <div class="bat mono">
+      <svg width="22" height="12" viewBox="0 0 22 12" role="img" aria-label="Bateria 61%"><rect x=".75" y=".75" width="18" height="10.5" rx="2" fill="none" stroke="#C3CAD5" stroke-width="1.5"/><rect x="2.5" y="2.5" width="8.6" height="7" rx="1" fill="#C3CAD5"/><rect x="20" y="4" width="1.6" height="4" rx=".6" fill="#C3CAD5"/></svg>61%
+    </div>
+    <span class="mono" style="font-size:13px;font-weight:500">08:43</span>
+    <button class="pill" aria-label="Configurações">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      Configurações
+    </button>
+    <div class="avatar" aria-label="Usuário">G</div>
+  </header>
+
+  <div class="body">
+    <nav class="rail" id="rail" aria-label="Pular para letra"></nav>
+
+    <main class="list">
+      <div class="titlebar">
+        <h1>Mesas</h1>
+        <span class="mono" style="font-size:12px;color:var(--text-dim)">1.142 mesas · 64 ★ · 38,6 GB</span>
+        <div style="flex:1"></div>
+        <div class="chips">
+          <span class="chip on">Todas</span><span class="chip">Favoritas</span><span class="chip">Solid state</span><span class="chip">Eletromecânicas</span><span class="chip">ROM faltando</span>
+        </div>
+        <span style="font-size:12px;color:var(--text-mid)">Ordem: A–Z</span>
+      </div>
+      <div class="cols colhead">
+        <span>★</span><span>MESA</span><span>FABRICANTE</span><span>ANO</span><span>TIPO</span><span>ROM</span><span>B2S</span><span>DMD</span><span>PUP</span><span>JOG.</span><span class="r">TEMPO</span><span class="r">RECORDE</span>
+      </div>
+      <div class="rows" id="rows" role="list"><div class="scroll" aria-hidden="true"></div></div>
+    </main>
+
+    <aside class="panel" aria-label="Detalhes da mesa">
+      <div class="shot" style="width:392px;height:220px">
+        <!-- Troque pelo screenshot real 16:9: <img src="media/playfield/Medieval Madness.png" alt=""> -->
+        <div class="pf"></div>
+        <div class="flip" style="left:150px;top:172px;width:34px;transform:rotate(20deg)"></div>
+        <div class="flip" style="left:208px;top:172px;width:34px;transform:rotate(-20deg)"></div>
+        <div class="ball" style="left:191px;top:128px;width:9px;height:9px"></div>
+        <span class="lbl" style="left:10px;top:9px">screenshot · 16:9 · vista desktop</span>
+        <span class="lbl" style="right:10px;bottom:8px">1920×1080</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+        <h2 class="ell" style="margin:0;flex:1;min-width:0;font-size:22px;font-weight:700;line-height:1.05">Medieval Madness</h2>
+        <span class="tag fav">★ Favorita</span>
+        <span class="tag info">SS · 4 jog.</span>
+      </div>
+      <div class="meta">
+        <span class="k">Fabricante</span><span class="v">Williams · 1997</span>
+        <span class="k">ROM</span><span class="v m">mm_109c</span>
+        <span class="k">Tempo jogado</span><span class="v m">14h 06m</span>
+        <span class="k">Última</span><span class="v m">ontem 23:10</span>
+        <span class="k">Extras</span><span class="v m">B2S · DMD · PuP</span>
+      </div>
+      <div class="scores">
+        <div class="hd"><span>RECORDES LOCAIS</span><span class="mono">nvram</span></div>
+        <div class="ln"><span>1. GIL</span><span class="mono" style="font-size:11px">412.880.150</span></div>
+        <div class="ln" style="color:var(--text-mid)"><span>2. GIL</span><span class="mono" style="font-size:11px">298.004.620</span></div>
+      </div>
+      <div style="flex:1"></div>
+      <button class="btn-play"><span class="g inv">A</span> Jogar</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn" style="flex:1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+          Jogar em retrato
+        </button>
+        <a href="#opcoes" class="btn" style="width:44px;text-decoration:none" aria-label="Opções da mesa"><span class="g">+</span></a>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <span class="mono" style="font-size:11px;color:var(--text-label)">17 / 1.142</span>
+    <div style="flex:1"></div>
+    <span class="hint"><span class="g">L</span><span class="g">R</span> Letra</span>
+    <span class="hint"><span class="g">ZL</span><span class="g">ZR</span> Página</span>
+    <span class="hint"><span class="g">Y</span> Grade</span>
+    <span class="hint"><span class="g">X</span> Favoritar</span>
+    <span class="hint"><span class="g">+</span> Opções</span>
+    <span class="hint"><span class="g">B</span> Voltar</span>
+    <span class="hint main"><span class="g on">A</span> Jogar</span>
+  </footer>
+</div>
+
+<!-- ============ TELA 2: OPÇÕES DA MESA ============ -->
+<div class="screen-label">OPÇÕES DA MESA · 1280×720</div>
+<div class="screen" id="opcoes">
+  <header>
+    <div class="logo">
+      <svg width="18" height="18" viewBox="0 0 18 18" role="img" aria-label="VPNX"><circle cx="9" cy="9" r="7.5" fill="#FFB020"/><circle cx="6.4" cy="6.2" r="2.1" fill="#fff" opacity=".85"/></svg>
+      <span>vpnx</span>
+    </div>
+    <nav class="crumb" aria-label="Caminho">
+      <a href="#lista">Mesas</a><span aria-hidden="true">›</span><span>Medieval Madness</span><span aria-hidden="true">›</span><b>Opções</b>
+    </nav>
+    <div style="flex:1"></div>
+    <span class="mode">PORTÁTIL · 720p</span>
+    <div class="bat mono">
+      <svg width="22" height="12" viewBox="0 0 22 12" role="img" aria-label="Bateria 61%"><rect x=".75" y=".75" width="18" height="10.5" rx="2" fill="none" stroke="#C3CAD5" stroke-width="1.5"/><rect x="2.5" y="2.5" width="8.6" height="7" rx="1" fill="#C3CAD5"/><rect x="20" y="4" width="1.6" height="4" rx=".6" fill="#C3CAD5"/></svg>61%
+    </div>
+    <span class="mono" style="font-size:13px;font-weight:500">08:44</span>
+  </header>
+
+  <div class="body">
+    <aside class="side" aria-label="Mesa">
+      <div class="shot" style="width:328px;height:184px;border-radius:5px">
+        <div class="pf"></div>
+        <div class="flip" style="left:126px;top:144px;width:28px;height:7px;transform:rotate(20deg)"></div>
+        <div class="flip" style="left:174px;top:144px;width:28px;height:7px;transform:rotate(-20deg)"></div>
+        <div class="ball" style="left:160px;top:106px;width:8px;height:8px"></div>
+        <span class="lbl" style="left:9px;top:8px">screenshot · 16:9</span>
+      </div>
+      <h1>Medieval Madness</h1>
+      <div class="kv">
+        <span class="k">Fabricante</span><span>Williams · 1997</span>
+        <span class="k">ROM</span><span class="mono" style="font-size:11px">mm_109c</span>
+        <span class="k">Arquivo</span><span class="mono ell" style="font-size:11px">Medieval Madness (Williams 1997).vpx</span>
+        <span class="k">Extras</span><span class="mono" style="font-size:11px">.directb2s · PuP pack</span>
+      </div>
+      <div style="flex:1"></div>
+      <button class="btn-play"><span class="g inv">+</span> Jogar com estas opções</button>
+    </aside>
+
+    <main class="opts">
+      <div class="optbar">
+        <span class="chip on">Esta mesa</span><span class="chip">Padrão global</span>
+        <div style="flex:1"></div>
+        <span style="color:var(--text-dim)">3 opções diferem do padrão</span>
+      </div>
+
+      <div class="sec">TELA</div>
+      <button class="opt sel"><span>Orientação</span><span class="val"><span class="g dark">‹</span><span>Retrato (console de lado)</span><span class="g dark">›</span></span></button>
+      <button class="opt"><span>Vista da câmera</span><span class="val"><span>‹</span><span>Definida pela mesa</span><span>›</span></span></button>
+      <button class="opt"><span>Posição do DMD</span><span class="val"><span>‹</span><span>Sobre o backglass</span><span>›</span></span></button>
+      <button class="opt"><span>Backglass na tela</span><span class="val"><span>‹</span><span>Topo · 25% da altura</span><span>›</span></span></button>
+
+      <div class="sec">CONTROLES</div>
+      <button class="opt"><span>Flippers</span><span class="val"><span>‹</span><span><span class="g">ZL</span> <span class="g">ZR</span></span><span>›</span></span></button>
+      <button class="opt"><span>Lançador</span><span class="val"><span>‹</span><span>Puxar analógico direito</span><span>›</span></span></button>
+      <button class="opt"><span>Nudge pelo giroscópio</span>
+        <span class="slider"><span class="track"><i style="width:60%"></i><b style="left:60%"></b></span><span class="mono" style="font-size:11px;width:30px;text-align:right">60%</span></span>
+      </button>
+      <button class="opt"><span>Vibração no flipper</span><span class="val"><span>‹</span><span>Leve</span><span>›</span></span></button>
+
+      <div class="sec">SOM E DESEMPENHO</div>
+      <button class="opt"><span>Volume mesa / ROM</span><span class="mono" style="font-size:11px;color:var(--text-mid);text-align:center">80% · 70%</span></button>
+      <button class="opt"><span>Resolução de render</span><span class="val"><span>‹</span><span>Nativa (720p / 1080p no dock)</span><span>›</span></span></button>
+    </main>
+  </div>
+
+  <footer>
+    <span style="color:var(--text-label)">Salvo em sdmc:/vpnx/tables/Medieval Madness.ini</span>
+    <div style="flex:1"></div>
+    <span class="hint"><span class="g">L</span><span class="g">R</span> Esta mesa / global</span>
+    <span class="hint"><span class="g">X</span> Restaurar padrão</span>
+    <span class="hint"><span class="g">B</span> Voltar</span>
+    <span class="hint main"><span class="g on">A</span> Alterar</span>
+  </footer>
+</div>
+
+<script>
+// Dados de exemplo da lista (tempos e recordes fictícios)
+const tables = [
+  ['★','Addams Family, The','Bally',1992,'SS','taf_l7',1,1,0,4,'22h 40m','188.402.330'],
+  ['','Attack from Mars','Bally',1995,'SS','afm_113b',1,1,0,4,'9h 12m','3.901.225.110'],
+  ['','Black Knight','Williams',1980,'SS','bk_l4',1,0,0,4,'1h 05m','612.420'],
+  ['★','Bride of Pin·Bot','Williams',1991,'SS','bop_l7',1,1,0,4,'4h 33m','41.880.210'],
+  ['','Cirqus Voltaire','Bally',1997,'SS','cv_14',1,1,1,4,'2h 18m','96.004.500'],
+  ['','Creature from the Black Lagoon','Bally',1992,'SS','cftbl_l4',1,1,0,4,'0h 47m','24.310.880'],
+  ['','Cyclone','Williams',1988,'SS','cycln_l5',1,0,0,4,'—','—'],
+  ['','Diner','Williams',1990,'SS','diner_l4',1,0,0,4,'0h 22m','8.120.040'],
+  ['','Eight Ball Deluxe','Bally',1981,'SS',null,1,0,0,4,'—','—'],
+  ['','Fireball','Bally',1972,'EM','—',1,0,0,1,'0h 31m','184.300'],
+  ['★','Fish Tales','Williams',1992,'SS','fs_lx5',1,1,0,4,'3h 50m','52.776.910'],
+  ['★','Funhouse','Williams',1990,'SS','fh_l9',1,1,0,4,'7h 02m','33.414.090'],
+  ['','Gorgar','Williams',1979,'SS','gorgr_l2',1,0,0,4,'—','—'],
+  ['','Haunted House','Gottlieb',1982,'SS',null,0,0,0,4,'—','—'],
+  ['','Jack·Bot','Williams',1995,'SS','jb_10r',1,1,0,4,'0h 40m','71.250.400'],
+  ['','Junk Yard','Williams',1996,'SS','jy_12',1,1,0,4,'1h 14m','118.006.920'],
+  ['★','Medieval Madness','Williams',1997,'SS','mm_109c',1,1,1,4,'14h 06m','412.880.150'],
+  ['★','Monster Bash','Williams',1998,'SS','mb_106b',1,1,1,4,'11h 27m','1.204.330.720'],
+  ['','No Good Gofers','Williams',1997,'SS','ngg_13',1,1,0,4,'0h 58m','204.770.110'],
+  ['','Paragon','Bally',1979,'SS','paragon',1,0,0,4,'—','—'],
+  ['','Scared Stiff','Bally',1996,'SS','ss_15',1,1,0,4,'2h 03m','88.140.600'],
+  ['','Space Shuttle','Williams',1984,'SS','sshtl_l7',1,0,0,4,'0h 19m','1.920.330'],
+  ['★','Theatre of Magic','Bally',1995,'SS','tom_14h',1,1,0,4,'6h 44m','620.415.200'],
+  ['★','Twilight Zone','Bally',1993,'SS','tz_92',1,1,0,4,'18h 31m','2.418.009.760']
+];
+const SELECTED = 16;
+const dot = v => v ? '●' : '·';
+const rows = document.getElementById('rows');
+const scroll = rows.querySelector('.scroll');
+tables.forEach((t, i) => {
+  const b = document.createElement('button');
+  b.className = 'row cols' + (i === SELECTED ? ' sel' : '');
+  b.setAttribute('role', 'listitem');
+  const rom = t[5] === null ? '<span class="m warn ell">ROM faltando</span>' : `<span class="m ell">${t[5]}</span>`;
+  b.innerHTML =
+    `<span class="star">${t[0]}</span><span class="ell">${t[1]}</span><span class="d ell">${t[2]}</span>` +
+    `<span class="m">${t[3]}</span><span class="m">${t[4]}</span>${rom}` +
+    `<span class="m">${dot(t[6])}</span><span class="m">${dot(t[7])}</span><span class="m">${dot(t[8])}</span>` +
+    `<span class="m">${t[9]}</span><span class="m r">${t[10]}</span><span class="m r">${t[11]}</span>`;
+  rows.insertBefore(b, scroll);
+});
+
+// Trilho A–Z
+const rail = document.getElementById('rail');
+const empty = 'QUXYZ';
+'#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(c => {
+  const b = document.createElement('button');
+  b.textContent = c;
+  if (c === 'M') b.className = 'on';
+  if (empty.includes(c)) b.disabled = true;
+  rail.appendChild(b);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+--- a/src/wine.c
++++ b/src/wine.c
+@@ -1563,7 +1563,7 @@
+ BOOL WINAPI ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
+ {
+    *lpNumberOfBytesRead = (DWORD)fread(lpBuffer, 1, nNumberOfBytesToRead, hFile);
+-   return ferror(hFile) ? FALSE : TRUE;
++   return ferror((FILE*)hFile) ? FALSE : TRUE;
+ }
+ 
+ BOOL WINAPI RemoveDirectoryW(LPCWSTR lpPathName)
+@@ -1592,7 +1592,7 @@
+    *lpNumberOfBytesWritten = 0;
+    while (*lpNumberOfBytesWritten < nNumberOfBytesToWrite) {
+       fputc(*pBuffer++, hFile);
+-      if(feof(hFile)) break;
++      if(feof((FILE*)hFile)) break;
+       (*lpNumberOfBytesWritten)++;
+    }
+    return TRUE;

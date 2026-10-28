@@ -1,0 +1,62 @@
+--- a/bx/include/bx/platform.h
++++ b/bx/include/bx/platform.h
+@@ -200,6 +200,11 @@
+ #elif  defined(__linux__)
+ #	undef  BX_PLATFORM_LINUX
+ #	define BX_PLATFORM_LINUX 1
++#elif defined(__NX__)
++// Nintendo Switch. devkitA64 (homebrew) does not define __NX__ itself; the build adds -D__NX__.
++// Must precede the clang-only __is_target_os() test below, which GCC cannot parse.
++#	undef  BX_PLATFORM_NX
++#	define BX_PLATFORM_NX 1
+ #elif  defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__) \
+ 	|| defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__)
+ #	undef  BX_PLATFORM_IOS
+--- a/bx/src/os.cpp
++++ b/bx/src/os.cpp
+@@ -29,9 +29,12 @@
+ #	endif // BX_PLATFORM_*
+ 
+ #	include <time.h> // nanosleep
+-#	if !BX_PLATFORM_PS4 && !BX_PLATFORM_PS5
++#	if !BX_PLATFORM_PS4 && !BX_PLATFORM_PS5 && !BX_PLATFORM_NX
+ #		include <dlfcn.h> // dlopen, dlclose, dlsym
+-#	endif // !BX_PLATFORM_PS4 && !BX_PLATFORM_PS5
++#	endif // !BX_PLATFORM_PS4 && !BX_PLATFORM_PS5 && !BX_PLATFORM_NX
++#	if BX_PLATFORM_NX
++#		include <switch.h> // svcGetInfo
++#	endif // BX_PLATFORM_NX
+ 
+ #	if BX_PLATFORM_ANDROID
+ #		include <malloc.h> // mallinfo
+@@ -145,6 +148,14 @@
+ 			, sizeof(pmc)
+ 			);
+ 		return pmc.WorkingSetSize;
++#elif BX_PLATFORM_NX
++		// Horizon: memory used by this process (libnx)
++		uint64_t used = 0;
++		if (R_FAILED(svcGetInfo(&used, InfoType_UsedMemorySize, CUR_PROCESS_HANDLE, 0) ) )
++		{
++			return 0;
++		}
++		return used;
+ #else
+ 		BX_ASSERT(false, "Function '%s' is not implemented!", BX_FUNCTION);
+ 		return 0;
+--- a/bgfx/3rdparty/khronos/EGL/eglplatform.h
++++ b/bgfx/3rdparty/khronos/EGL/eglplatform.h
+@@ -145,6 +145,13 @@
+ typedef khronos_uintptr_t  EGLNativePixmapType;
+ typedef khronos_uintptr_t  EGLNativeWindowType;
+ 
++#elif defined(__SWITCH__) || defined(__NX__)
++
++/* Nintendo Switch homebrew (devkitPro Mesa/nouveau): the native window is a libnx NWindow* */
++typedef void            *EGLNativeDisplayType;
++typedef khronos_uint8_t *EGLNativePixmapType;
++typedef void            *EGLNativeWindowType;
++
+ #else
+ #error "Platform not recognized"
+ #endif
