@@ -16,7 +16,7 @@ dependencies cross-built as static libraries.
 | Piece | State |
 |---|---|
 | Build of `vpinball.nro` | works (devkitPro, LTO link takes ~10 min) |
-| Table loading (`.vpx`), physics, VBScript (libwinevbs) | works (Terminator 2 plays) |
+| Table loading (`.vpx`), physics, VBScript (libwinevbs) | works (a PinMAME table plays) |
 | Rendering, OpenGL ES (Mesa/nouveau) | works, ~21 fps |
 | Rendering, Vulkan (nxvk) | **works, ~28 fps**; checked on hardware: correct image (colours, textures, lighting), smooth, controls respond |
 | PinMAME (libpinmame), audio | ROM loads and runs, audio plays |
@@ -54,8 +54,8 @@ are entitled to.
 | What | Where |
 |---|---|
 | **Tables** (`.vpx`) | `sdmc:/roms/vpx/`, `sdmc:/roms/pinball/` or `sdmc:/switch/vpnx/` (the frontend scans these, one subfolder deep; the subfolders `assets`, `plugins`, `pinmame`, `cache`, `prefs`, `scripts`, `nvram`, `cfg`, `roms` and `music` are skipped) |
-| **PinMAME romsets** (`<romset>.zip`, e.g. `t2_l8.zip`) | in a `pinmame` folder **next to the table**: a table in `sdmc:/roms/vpx/` uses `sdmc:/roms/vpx/pinmame/<romset>.zip` (or `.../pinmame/roms/<romset>.zip`); a table in `sdmc:/switch/vpnx/` uses `sdmc:/switch/vpnx/pinmame/roms/<romset>.zip`. Keep the zip as it is, do not unpack it |
-| **Screenshots / media** | `sdmc:/switch/vpnx/media/<table file name>.jpg` or `.png`: the name is the `.vpx` file name without the extension (`Terminator 2.vpx` → `media/Terminator 2.jpg`). The frontend shows it in the list and the grid (16:9 looks best). The player saves one automatically **the first time you close the table**; replace it with any image you like |
+| **PinMAME romsets** (`<romset>.zip`, named as the table expects) | in a `pinmame` folder **next to the table**: a table in `sdmc:/roms/vpx/` uses `sdmc:/roms/vpx/pinmame/<romset>.zip` (or `.../pinmame/roms/<romset>.zip`); a table in `sdmc:/switch/vpnx/` uses `sdmc:/switch/vpnx/pinmame/roms/<romset>.zip`. Keep the zip as it is, do not unpack it |
+| **Screenshots / media** | `sdmc:/switch/vpnx/media/<table file name>.jpg` or `.png`: the name is the `.vpx` file name without the extension (`My Table.vpx` → `media/My Table.jpg`). The frontend shows it in the list and the grid (16:9 looks best). The player saves one automatically **the first time you close the table**; replace it with any image you like |
 | **High scores, NVRAM, PinMAME settings** | created by PinMAME in the `pinmame` folder of the table: `nvram/`, `cfg/`, `hi/` |
 | **Table-specific scripts / sounds / music** | next to the table, as on the desktop (scripts are searched next to the table first, then in `sdmc:/switch/vpnx/scripts/`) |
 | **Settings** | `sdmc:/switch/vpnx/prefs/10.8/VPinballX.ini` (written by the in-game menu) |
@@ -71,8 +71,8 @@ sdmc:/switch/vpnx/plugins/scoreview/      DMD layouts + plugin.cfg
 sdmc:/switch/vpnx/media/                  table screenshots
 sdmc:/switch/vpnx/prefs/  cache/          settings and caches (created by the app)
 sdmc:/switch/vpnx/fe.json                 frontend state
-sdmc:/roms/vpx/Terminator 2.vpx           a table...
-sdmc:/roms/vpx/pinmame/t2_l8.zip          ...and its romset
+sdmc:/roms/vpx/My Table.vpx               a table...
+sdmc:/roms/vpx/pinmame/<romset>.zip       ...and its romset
 ```
 
 ### 3. Play
@@ -126,7 +126,7 @@ there are two builds of the same sources, differing only in the link:
 | Driver | devkitPro switch-mesa (nouveau) | [nxvk](https://github.com/PalindromicBreadLoaf/nxvk), NVK ported to Horizon, linked statically |
 | bgfx | `./build-bgfx.sh` | `BGFX_VARIANT=vk ./build-bgfx.sh` (+ `patches/bgfx-vulkan-nx.patch`) |
 | Shaders | GLSL ES compiled by Mesa at start | SPIR-V, precompiled |
-| Terminator 2, handheld | ~21 fps (GPU at 921 MHz) | **~28 fps** (GPU at 461 MHz) |
+| Heavy PinMAME table, handheld | ~21 fps (GPU at 921 MHz) | **~28 fps** (GPU at 461 MHz) |
 | Load + static prerender | ~45 s | ~7 s |
 
 nxvk is built in a container (`podman build -t nxvk switch/docker && make` in its repo, ~3 min after the image) and its
@@ -138,7 +138,7 @@ static SDL.
 
 ## Performance
 
-Measured on a Switch in handheld mode with Terminator 2, a heavy table (~650 draw calls and ~280k triangles per frame, 11
+Measured on a Switch in handheld mode with a heavy PinMAME table (~650 draw calls and ~280k triangles per frame, 11
 intermediate render targets), at 720p. The app prints a `[perf]` line every 3 s on the nxlink console with the time per frame
 of every stage, the bgfx stats (draw calls, triangles, GPU time) and, after 90 s of play, the slowest frames with the time per
 script timer. With the profiler build of bgfx (`BGFX_PROFILER=1 BGFX_VARIANT=vk ./build-bgfx.sh`) it also prints a `[scopes]`
