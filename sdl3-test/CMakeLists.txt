@@ -11,5 +11,5 @@ target_include_directories(sdl3-test PRIVATE "${SDL3_PREFIX}/include" "$ENV{DEVK
 target_link_libraries(sdl3-test PRIVATE
     "${SDL3_PREFIX}/lib/libSDL3.a" EGL GLESv2 glapi drm_nouveau nx stdc++)
 
-nx_generate_nacp(OUTPUT sdl3-test.nacp NAME "SDL3 Test" AUTHOR "vpnx" VERSION "${PROJECT_VERSION}")
+nx_generate_nacp(OUTPUT sdl3-test.nacp NAME "SDL3 Test" AUTHOR "RumaTeam" VERSION "${PROJECT_VERSION}")
 nx_create_nro(sdl3-test NACP sdl3-test.nacp)

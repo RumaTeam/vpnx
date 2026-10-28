@@ -5,6 +5,9 @@ its PinMAME romset, running natively on the console. It is the upstream vpinball
 Mesa/nouveau on the native window) with a thin Switch layer: a libnx shell, a few portability fixes and the
 dependencies cross-built as static libraries.
 
+> **This project does not provide, host or link to ROMs, PinMAME romsets, tables (`.vpx`) or any other game files.** You must supply
+> your own, legally obtained. See the [Legal notice](#legal-notice).
+
 > If you enjoyed this port, please consider [buying me a coffee](https://ko-fi.com/rumateam).
 > This project exists because of the work of many other teams: see [Credits and thanks](#credits-and-thanks).
 
@@ -170,7 +173,7 @@ vpinball settings already offer and which are left at their desktop defaults on 
 
 ## Using VPNX from Ruma
 
-[Ruma](https://github.com/RumaTeam/ruma) is the emulation frontend of the same author (libnx + SDL2): a shell that lists the
+[Ruma](https://github.com/RumaTeam/ruma) is the emulation frontend of the same team (libnx + SDL2): a shell that lists the
 games of every system and launches each emulator as a *runner*, coming back to the list when the game ends. VPNX is a runner of
 Ruma, so the table browser, the covers, the favourites and the per-table options are Ruma's. VPNX does not carry a frontend of
 its own for that case.
@@ -306,6 +309,18 @@ Notable libnx findings baked into the patches: no `pthread_detach` (ThreadPool a
 stacks default to 1 MiB (Mesa's GLSL compiler overflows it, so every thread gets 8 MiB), SDL returns no base/pref
 path, and bgfx needs the default `NWindow` passed explicitly.
 
+## Legal notice
+
+- **No game files are provided.** VPNX is a player: this repository and its releases contain no ROMs, no PinMAME romsets, no tables
+  (`.vpx`), no backglass or media packs, no BIOS or any other copyrighted game content, and we will not help to obtain them. Do not
+  ask for them, and do not attach them to issues or pull requests.
+- You are responsible for the files you use: dump them from machines you own, or use tables and romsets you have the right to use
+  (many tables and romsets are distributed freely by their authors).
+- VPNX is an independent homebrew project. It is **not affiliated with or endorsed by** Nintendo, the Visual Pinball or PinMAME projects,
+  or the owners of any pinball machine, brand or table. All trademarks belong to their respective owners.
+- It runs on consoles with custom firmware, which you modify at your own risk; the software is provided as is, without warranty
+  (see the license).
+
 ## Credits and thanks
 
 VPNX is a thin layer on top of the work of many people, and it would not exist without them. Thank you to:
@@ -331,6 +346,8 @@ If you enjoyed this port, please consider [buying me a coffee](https://ko-fi.com
 ## License
 
 GPL-3.0, like Visual Pinball (the combined work links GPL code).
+
+The Switch layer of this repository is Copyright (c) 2026 RumaTeam, under the same license.
 
 Third-party parts: `vpinball/switch/forwarder.cpp` and `forwarder_structs.h` come from dolphin-nx (MPL-2.0, adapted; each file keeps
 its notice and stays under the MPL-2.0), and the forwarder payload in `forwarder/` derives from nx-hbloader (ISC, see

@@ -13,5 +13,5 @@ target_link_libraries(pinmame-nro PRIVATE "${PINMAME_BUILD}/libpinmame.a" nx)
 target_compile_options(pinmame-nro PRIVATE -flto=auto)
 target_link_options(pinmame-nro PRIVATE -flto=auto -Wl,--wrap=exit,--wrap=abort,--wrap=__assert_func)
 
-nx_generate_nacp(OUTPUT pinmame-nro.nacp NAME "PinMAME Test" AUTHOR "vpnx" VERSION "${PROJECT_VERSION}")
+nx_generate_nacp(OUTPUT pinmame-nro.nacp NAME "PinMAME Test" AUTHOR "RumaTeam" VERSION "${PROJECT_VERSION}")
 nx_create_nro(pinmame-nro NACP pinmame-nro.nacp)

@@ -15,5 +15,5 @@ target_link_libraries(bgfx-test PRIVATE
     "${PREFIX}/lib/libbgfx.a" "${PREFIX}/lib/libbimg_decode.a" "${PREFIX}/lib/libbimg.a" "${PREFIX}/lib/libbx.a"
     "${PREFIX}/lib/libSDL3.a" EGL GLESv2 glapi drm_nouveau nx stdc++)
 
-nx_generate_nacp(OUTPUT bgfx-test.nacp NAME "bgfx Test" AUTHOR "vpnx" VERSION "${PROJECT_VERSION}")
+nx_generate_nacp(OUTPUT bgfx-test.nacp NAME "bgfx Test" AUTHOR "RumaTeam" VERSION "${PROJECT_VERSION}")
 nx_create_nro(bgfx-test NACP bgfx-test.nacp)

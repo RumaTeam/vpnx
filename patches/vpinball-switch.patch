@@ -285,7 +285,7 @@ index e5c0459..f019485 100644
  
  bool WebServer::ValidatePathParameter(struct mg_connection *c, struct mg_http_message* hm, const char* paramName, string& outValue)
 diff --git a/make/CMakeLists_app.txt b/make/CMakeLists_app.txt
-index 0f66c23..9148382 100644
+index 0f66c23..2ef2974 100644
 --- a/make/CMakeLists_app.txt
 +++ b/make/CMakeLists_app.txt
 @@ -809,4 +809,97 @@ elseif(PLATFORM STREQUAL "ios" OR PLATFORM STREQUAL "ios-simulator" OR PLATFORM
@@ -380,7 +380,7 @@ index 0f66c23..9148382 100644
 +
 +   set_target_properties(vpinball PROPERTIES RUNTIME_OUTPUT_NAME "vpinball")
 +
-+   nx_generate_nacp(OUTPUT vpinball.nacp NAME "VPNX" AUTHOR "vpnx" VERSION "${PROJECT_VERSION}")
++   nx_generate_nacp(OUTPUT vpinball.nacp NAME "VPNX" AUTHOR "RumaTeam" VERSION "${PROJECT_VERSION}")
 +   # the hbmenu icon: docs/brand/make_icon.py
 +   # romfs: the forwarder payload (forwarder/Makefile builds it)
 +   nx_create_nro(vpinball NACP vpinball.nacp ICON "${CMAKE_SOURCE_DIR}/../docs/brand/icon.jpg" ROMFS "${CMAKE_SOURCE_DIR}/../romfs")
@@ -4278,7 +4278,7 @@ index 0000000..b27e588
 +const char* FrontendTr(const char* english);
 diff --git a/switch/main.cpp b/switch/main.cpp
 new file mode 100644
-index 0000000..e1716f8
+index 0000000..2ad8713
 --- /dev/null
 +++ b/switch/main.cpp
 @@ -0,0 +1,764 @@
@@ -4437,7 +4437,7 @@ index 0000000..e1716f8
 +   }
 +}
 +
-+// ---- Ruma (https://github.com/RumaTeam/ruma, the user's emulation frontend) -----------------------------------------------
++// ---- Ruma (https://github.com/RumaTeam/ruma, the RumaTeam emulation frontend) -----------------------------------------------
 +// Ruma lists the tables, writes /ruma/session.json and launches this NRO as a runner: "{nro} --rom {rom} --session {session}".
 +// The session carries the table (rom), the resolved options and where to go back (return.nro / return.argv). When this app ends it
 +// hands control back with envSetNextLoad. Ruma consumes (reads, then deletes) the session itself: it must not be touched here.
