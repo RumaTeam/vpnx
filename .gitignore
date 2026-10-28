@@ -1,5 +1,6 @@
 # third-party clones and build products (recreated by the build-*.sh scripts)
 build/
+dist/
 external/
 prefix/
 pinmame/
