@@ -77,10 +77,10 @@ y:36 ├────┬───────────────────
 y:80 │ A  ├───────────────────────────────────────────────────────┤ ┌─────────────────────────┐ │
      │ B  │ ★ MESA       FABRIC. ANO TIPO ROM  B2S DMD PUP JOG TEMPO RECORDE│ │                         │ │
 y:104│ C  ├───────────────────────────────────────────────────────┤ │   SCREENSHOT 16:9       │ │
-     │ D  │ ★ Addams Family, The  Bally 1992 SS taf_l7 ● ● · 4 22h40m 188.402.330 │ │   392×220               │ │
-     │ E  │   Attack from Mars    Bally 1995 SS afm_113b ● ● · 4 …                 │ │                         │ │
+     │ D  │ ★ Alpha Table         Maker A 1992 SS rom_01 ● ● · 4 22h40m 188.402.330 │ │   392×220               │ │
+     │ E  │   Anchor Table        Maker A 1995 SS rom_02   ● ● · 4 …                 │ │                         │ │
      │ …  │   …                                                   │ └─────────────────────────┘ │
-     │[M] │▌★ Medieval Madness   Williams 1997 SS mm_109c ● ● ● 4 …  ← selecionada│ Medieval Madness  [★][SS·4]│
+     │[M] │▌★ My Table           Maker B  1997 SS rom_14  ● ● ● 4 …  ← selecionada│ My Table          [★][SS·4]│
      │ N  │   …                                                   │ Fabricante …   ROM …        │
      │ …  │   …                                                 ▐ │ Tempo …        Última …     │
      │ Z  │   (24 linhas visíveis)                                │ Extras …                    │
@@ -166,7 +166,7 @@ Medidas absolutas em tela:
 
 - **Screenshot**: arquivo PNG/JPG 16:9 (ex.: 1920×1080) na vista desktop da mesa, que aparece em perspectiva no centro com o backglass nas laterais. Ele é reduzido para 392×220 (588×330 no dock). É a **única imagem** do painel; backglass e DMD não aparecem aqui.
 - **Fallback sem screenshot**: retângulo `placeholder` com o rótulo mono 10 "sem screenshot · + para capturar".
-- **Grade de dados**: Fabricante ("Williams · 1997"), ROM, Tempo jogado, Última ("ontem 23:10"), Extras ("B2S · DMD · PuP").
+- **Grade de dados**: Fabricante ("Maker B  · 1997"), ROM, Tempo jogado, Última ("ontem 23:10"), Extras ("B2S · DMD · PuP").
 - **Recordes**: cabeçalho "RECORDES LOCAIS" (11, tracking 0.08em, `text.label`) com "nvram" à direita, seguido das 2 melhores pontuações ("1. GIL ··· 412.880.150", sendo a segunda em `text.mid`).
 
 ### Rodapé (h 32, padding 0 14, gap 16, texto 12 `text.mid`)
@@ -199,13 +199,13 @@ Medidas absolutas em tela:
 ```
 x:0                    360                                                              1280
 y:0  ┌──────────────────────────────────────────────────────────────────────────────────────┐
-     │ ● vpnx   Mesas › Medieval Madness › Opções                PORTÁTIL·720p bat 08:44    │
+     │ ● vpnx   Mesas › My Table         › Opções                PORTÁTIL·720p bat 08:44    │
 y:36 ├──────────────────────┬───────────────────────────────────────────────────────────────┤
      │ ┌──────────────────┐ │ (Esta mesa)(Padrão global)              3 opções diferem…     │
      │ │ screenshot 16:9  │ │ TELA                                                          │
      │ │ 328×184          │ │▌Orientação                    [‹]  Retrato (console de lado) [›]│
      │ └──────────────────┘ │  Vista da câmera                ‹   Definida pela mesa      ›  │
-     │ Medieval Madness     │  Posição do DMD                 ‹   Sobre o backglass       ›  │
+     │ My Table             │  Posição do DMD                 ‹   Sobre o backglass       ›  │
      │ Fabricante  …        │  Backglass na tela              ‹   Topo · 25% da altura    ›  │
      │ ROM         …        │ CONTROLES                                                     │
      │ Arquivo     ….vpx    │  Flippers                       ‹        ZL  ZR             ›  │
@@ -216,7 +216,7 @@ y:36 ├──────────────────────┬─
      │ [(+) Jogar com estas]│  Volume mesa / ROM                    80% · 70%               │
      │                      │  Resolução de render            ‹ Nativa (720p/1080p dock) ›  │
 y:688├──────────────────────┴───────────────────────────────────────────────────────────────┤
-     │ Salvo em sdmc:/vpnx/tables/Medieval Madness.ini   [L][R] Esta mesa/global [X] Restaurar [B] Voltar [A] Alterar │
+     │ Salvo em sdmc:/vpnx/tables/My Table        .ini   [L][R] Esta mesa/global [X] Restaurar [B] Voltar [A] Alterar │
 y:720└──────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -279,11 +279,11 @@ y:720└────────────────────────
 typedef enum { TABLE_SS, TABLE_EM } TableKind;
 
 typedef struct {
-    char     name[128];        // "Medieval Madness"
-    char     manufacturer[32]; // "Williams"
+    char     name[128];        // "My Table        "
+    char     manufacturer[32]; // "Maker B "
     uint16_t year;             // 1997
     TableKind kind;
-    char     rom[32];          // "mm_109c"; vazio = EM
+    char     rom[32];          // "rom_14 "; vazio = EM
     bool     rom_present;      // false => "ROM faltando"
     bool     has_b2s, has_dmd, has_pup;
     uint8_t  players;          // 1–4
@@ -291,8 +291,8 @@ typedef struct {
     uint32_t play_seconds;     // contado pelo próprio VPNX
     int64_t  last_played;      // epoch; 0 = nunca
     uint64_t high_scores[2];   // lidos da nvram do PinMAME
-    char     vpx_path[256];    // sdmc:/vpnx/tables/Medieval Madness.vpx
-    char     shot_path[256];   // sdmc:/vpnx/media/playfield/Medieval Madness.png
+    char     vpx_path[256];    // sdmc:/vpnx/tables/My Table        .vpx
+    char     shot_path[256];   // sdmc:/vpnx/media/playfield/My Table        .png
 } Table;
 ```
 
