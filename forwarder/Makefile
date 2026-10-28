@@ -28,7 +28,7 @@ $(OUT)/hbl.npdm: hbl.json | $(OUT)
 	$(TOOLS)/npdmtool $< $@
 
 $(OUT)/default.nacp: Makefile | $(OUT)
-	$(TOOLS)/nacptool --create VPNX Gilson $(RELEASE_VERSION) $@
+	$(TOOLS)/nacptool --create VPNX RumaTeam $(RELEASE_VERSION) $@
 
 $(OUT):
 	mkdir -p $@
