@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds SDL3_image (stb backend only) and SDL3_ttf (devkitPro freetype portlib) as static libs into ./prefix/switch.
+# Builds SDL3_image (stb backend: JPEG and PNG) and SDL3_ttf (devkitPro freetype portlib) as static libs into ./prefix/switch.
 # Requires build-sdl3.sh to have been run first.
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -20,7 +20,7 @@ fetch SDL_image "https://github.com/libsdl-org/SDL_image/archive/${SDL_IMAGE_SHA
 I=$(ls -d external/SDL_image/SDL_image-*/ | head -1)
 cmake -S "$I" -B build/sdl3-image-switch "${COMMON[@]}" -DSDL3_DIR="$PREFIX/lib/cmake/SDL3" \
   -DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_VENDORED=OFF -DSDLIMAGE_DEPS_SHARED=OFF \
-  -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_WEBP=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_TIF=OFF -DSDLIMAGE_PNG=OFF -DSDLIMAGE_JPG=OFF \
+  -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_WEBP=OFF -DSDLIMAGE_JXL=OFF -DSDLIMAGE_TIF=OFF -DSDLIMAGE_PNG=ON -DSDLIMAGE_PNG_LIBPNG=OFF -DSDLIMAGE_PNG_SAVE=OFF -DSDLIMAGE_JPG=ON -DSDLIMAGE_JPG_SAVE=OFF \
   "-DCMAKE_C_FLAGS=$NX_FLAGS"
 cmake --build build/sdl3-image-switch -j"$(nproc)"; cmake --install build/sdl3-image-switch
 

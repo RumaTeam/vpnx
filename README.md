@@ -55,7 +55,7 @@ are entitled to.
 |---|---|
 | **Tables** (`.vpx`) | `sdmc:/roms/vpx/`, `sdmc:/roms/pinball/` or `sdmc:/switch/vpnx/` (the frontend scans these, one subfolder deep; the subfolders `assets`, `plugins`, `pinmame`, `cache`, `prefs`, `scripts`, `nvram`, `cfg`, `roms` and `music` are skipped) |
 | **PinMAME romsets** (`<romset>.zip`, named as the table expects) | in a `pinmame` folder **next to the table**: a table in `sdmc:/roms/vpx/` uses `sdmc:/roms/vpx/pinmame/<romset>.zip` (or `.../pinmame/roms/<romset>.zip`); a table in `sdmc:/switch/vpnx/` uses `sdmc:/switch/vpnx/pinmame/roms/<romset>.zip`. Keep the zip as it is, do not unpack it |
-| **Screenshots / media** | `sdmc:/switch/vpnx/media/<table file name>.jpg` or `.png`: the name is the `.vpx` file name without the extension (`My Table.vpx` → `media/My Table.jpg`). The frontend shows it in the list and the grid (16:9 looks best). The player saves one automatically **the first time you close the table**; replace it with any image you like |
+| **Screenshots / media** | `sdmc:/switch/vpnx/media/<table file name>.jpg`, `.jpeg` or `.png`: the name is the `.vpx` file name without the extension (`My Table.vpx` → `media/My Table.jpg`). The frontend shows it in the list and the grid (16:9 looks best). The player saves one automatically **the first time you close the table**; replace it with any image you like |
 | **High scores, NVRAM, PinMAME settings** | created by PinMAME in the `pinmame` folder of the table: `nvram/`, `cfg/`, `hi/` |
 | **Table-specific scripts / sounds / music** | next to the table, as on the desktop (scripts are searched next to the table first, then in `sdmc:/switch/vpnx/scripts/`) |
 | **Settings** | `sdmc:/switch/vpnx/prefs/10.8/VPinballX.ini` (written by the in-game menu) |
@@ -105,11 +105,11 @@ into the frontend (`--back`, which skips the splash).
 |---|---|
 | D-pad / left stick | move · ZL/ZR page · L/R previous/next initial |
 | A | play · X favourite · − favourites only · Y list/grid |
-| + | options: camera view, DMD, console clocks, **language** (English (US) is the default, Português (Brasil)) |
+| + | options: camera view, DMD, console clocks, **language** (English (US) is the default, Português (Brasil)) and **Controls help**, a screen with the buttons in the table, in the in-game menu and in the frontend |
 | B | quit |
 
 Tables are found in `/roms/vpx`, `/roms/pinball` and `/switch/vpnx` (one folder deep). The screenshot of a table is
-`sdmc:/switch/vpnx/media/<table file name>.jpg|png`; the player saves it the first time a table is closed. Favourites, time
+`sdmc:/switch/vpnx/media/<table file name>.jpg|jpeg|png` (the case does not matter; an image whose name is contained in the table's name, or the other way round, also matches); the player saves one the first time a table is closed. The details panel says which file was used, or which name is expected, or why an image could not be read; `sdmc:/switch/vpnx/frontend.log` lists the image found for each table. Favourites, time
 played, the view mode and the options are in `sdmc:/switch/vpnx/fe.json`.
 
 Started in applet mode (hbmenu opened from the album) the frontend explains that the player needs Application mode and offers

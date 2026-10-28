@@ -3039,10 +3039,10 @@ index 0000000..cea5018
 +};
 diff --git a/switch/frontend.cpp b/switch/frontend.cpp
 new file mode 100644
-index 0000000..d261967
+index 0000000..9bd78e8
 --- /dev/null
 +++ b/switch/frontend.cpp
-@@ -0,0 +1,1208 @@
+@@ -0,0 +1,1382 @@
 +// VPNX table browser (standalone mode). See frontend.h. Visual language and tokens: docs/VPNX_WIREFRAME.md (same skeleton as Ruma),
 +// reduced to what the VPNX needs: a list with a detail panel, a grid of screenshots, favourites and the time played.
 +#include "forwarder.h"
@@ -3118,6 +3118,21 @@ index 0000000..d261967
 +   { "Console clocks", "Clocks do console" }, { "Safe per mode (recommended)", "Seguro por modo (recomendado)" },
 +   { "Homebrew stock", "Originais do homebrew" }, { "Max GPU (test)", "GPU no máximo (teste)" }, { "Language", "Idioma" },
 +   { "Visual Pinball X on Nintendo Switch", "Visual Pinball X no Nintendo Switch" },
++   { "unreadable image", "imagem ilegível" }, { "expected: media/", "esperado: media/" },
++   // controls help
++   { "Controls help", "Ajuda dos controles" }, { "Open", "Abrir" }, { "In the table", "Na mesa" }, { "In the game menu (- key)", "No menu do jogo (tecla -)" },
++   { "In the frontend", "No frontend" },
++   { "Launch the ball", "Lançar a bola" }, { "Plunger: pull down and release", "Plunger: puxe para baixo e solte" },
++   { "Left flipper", "Flipper esquerdo" }, { "Right flipper", "Flipper direito" }, { "Nudge the table", "Empurrar a mesa (nudge)" },
++   { "Start the game", "Iniciar o jogo" }, { "Add a credit", "Inserir crédito" }, { "Open the in-game menu", "Abrir o menu do jogo" },
++   { "Close the table and go back", "Fechar a mesa e voltar" }, { "Navigate the menu", "Navegar no menu" },
++   { "Confirm / increase the value", "Confirmar / aumentar o valor" }, { "Go back", "Voltar" },
++   { "Cancel the pending changes", "Cancelar as alterações pendentes" },
++   { "Move (also the left stick)", "Mover (também o analógico esquerdo)" }, { "Previous / next page", "Página anterior / próxima" },
++   { "Previous / next letter", "Letra anterior / próxima" }, { "Play the table", "Jogar a mesa" }, { "Favorites only", "Só favoritas" },
++   { "List / grid", "Lista / grade" }, { "Options and this help", "Opções e esta ajuda" },
++   { "With Ruma, hold these to return to Ruma", "Com o Ruma, segure para voltar ao Ruma" },
++   { "HOME always closes the app", "O botão HOME sempre fecha o app" },
 +   // applet-mode notice
 +   { "Open VPNX in Application mode", "Abrir o VPNX em modo Aplicação" },
 +   { "For better performance VPNX needs to run in Application mode (with all of the console's memory).",
@@ -3282,6 +3297,14 @@ index 0000000..d261967
 +   SDL_BlitSurface(surf, nullptr, g_canvas, &dst);
 +}
 +
++void FrontendLog(const std::string& line)
++{
++   if (FILE* f = fopen("/switch/vpnx/frontend.log", "ab")) {
++      fprintf(f, "%s\n", line.c_str());
++      fclose(f);
++   }
++}
++
 +struct Shot
 +{
 +   SDL_Surface* surf = nullptr;
@@ -3289,6 +3312,7 @@ index 0000000..d261967
 +   unsigned long used = 0;
 +};
 +std::unordered_map<std::string, Shot> g_shots;
++std::map<std::string, std::string> g_shotErrors; // image path -> why it could not be read
 +unsigned long g_tick = 0;
 +int g_loadBudget = 0;
 +
@@ -3308,7 +3332,12 @@ index 0000000..d261967
 +   g_loadBudget--;
 +   Shot shot;
 +   shot.used = ++g_tick;
-+   if (SDL_Surface* src = IMG_Load(path.c_str())) {
++   SDL_Surface* src = IMG_Load(path.c_str());
++   if (!src) {
++      g_shotErrors[path] = SDL_GetError();
++      FrontendLog("   cannot read " + path + ": " + g_shotErrors[path]);
++   }
++   if (src) {
 +      SDL_Surface* dst = SDL_CreateSurface(w, h, SDL_PIXELFORMAT_RGBA32);
 +      if (dst) {
 +         // crop the source to the target's aspect ("cover")
@@ -3327,6 +3356,8 @@ index 0000000..d261967
 +      SDL_DestroySurface(src);
 +   }
 +   shot.failed = shot.surf == nullptr;
++   if (shot.failed && !g_shotErrors.count(path))
++      g_shotErrors[path] = "the image could not be scaled";
 +   if (g_shots.size() > 40) {
 +      auto oldest = g_shots.begin();
 +      for (auto i = g_shots.begin(); i != g_shots.end(); ++i)
@@ -3371,6 +3402,60 @@ index 0000000..d261967
 +   }
 +}
 +
++// ---- screenshots: sdmc:/switch/vpnx/media/<table file name>.jpg|jpeg|png (where the player saves it) ----
++std::string Lower(std::string s);
++
++std::vector<std::pair<std::string, std::string>> g_media; // lower-case stem, full path
++
++bool IsImageName(const std::string& lower, std::string& stem)
++{
++   for (const char* ext : { ".jpg", ".jpeg", ".png" }) {
++      const size_t n = strlen(ext);
++      if (lower.size() > n && lower.compare(lower.size() - n, n, ext) == 0) {
++         stem = lower.substr(0, lower.size() - n);
++         return true;
++      }
++   }
++   return false;
++}
++
++void IndexMedia()
++{
++   g_media.clear();
++   if (DIR* d = opendir("/switch/vpnx/media")) {
++      while (const dirent* e = readdir(d)) {
++         std::string stem;
++         const std::string lower = Lower(e->d_name);
++         if (e->d_name[0] != '.' && IsImageName(lower, stem))
++            g_media.emplace_back(stem, std::string("/switch/vpnx/media/") + e->d_name);
++      }
++      closedir(d);
++   }
++}
++
++// the image of a table: the same name as the table (any case), else an image whose name is part of the table's (or the other way round,
++// at least 5 characters, the longest wins), else an image next to the table
++std::string FindShot(const std::string& name, const std::string& dir)
++{
++   const std::string lname = Lower(name);
++   for (const auto& m : g_media)
++      if (m.first == lname)
++         return m.second;
++   const std::pair<std::string, std::string>* best = nullptr;
++   for (const auto& m : g_media)
++      if (m.first.size() >= 5 && lname.size() >= 5 && (lname.find(m.first) != std::string::npos || m.first.find(lname) != std::string::npos))
++         if (!best || m.first.size() > best->first.size())
++            best = &m;
++   if (best)
++      return best->second;
++   for (const char* ext : { ".jpg", ".jpeg", ".png" }) {
++      const std::string shot = dir + "/" + name + ext;
++      if (access(shot.c_str(), F_OK) == 0)
++         return shot;
++   }
++   return std::string();
++}
++
 +void ScanTables(const std::string& dir, int depth, std::vector<Table>& out)
 +{
 +   DIR* d = opendir(dir.c_str());
@@ -3386,13 +3471,7 @@ index 0000000..d261967
 +         t.path = path;
 +         t.dir = dir;
 +         t.name = std::string(e->d_name, n - 4);
-+         // sdmc:/switch/vpnx/media/<table file name>.jpg|png (where the player saves it), else next to the table
-+         for (const char* base : { "/switch/vpnx/media", dir.c_str() })
-+            for (const char* ext : { ".jpg", ".png" }) {
-+               const std::string shot = std::string(base) + "/" + t.name + ext;
-+               if (t.shot.empty() && access(shot.c_str(), F_OK) == 0)
-+                  t.shot = shot;
-+            }
++         t.shot = FindShot(t.name, dir);
 +         out.push_back(std::move(t));
 +      } else if (depth > 0 && e->d_type == DT_DIR) {
 +         static const char* skip[] = { "assets", "plugins", "pinmame", "cache", "prefs", "scripts", "nvram", "cfg", "roms", "music" };
@@ -3421,11 +3500,15 @@ index 0000000..d261967
 +void LoadTables()
 +{
 +   g_tables.clear();
++   IndexMedia();
 +   for (const char* dir : { "/roms/vpx", "/roms/pinball", "/switch/vpnx" })
 +      ScanTables(dir, 1, g_tables);
 +   std::sort(g_tables.begin(), g_tables.end(), [](const Table& a, const Table& b) { return a.path < b.path; });
 +   g_tables.erase(std::unique(g_tables.begin(), g_tables.end(), [](const Table& a, const Table& b) { return a.path == b.path; }), g_tables.end());
 +   std::sort(g_tables.begin(), g_tables.end(), [](const Table& a, const Table& b) { return Lower(a.name) < Lower(b.name); });
++   FrontendLog("-- " + std::to_string(g_tables.size()) + " tables, " + std::to_string(g_media.size()) + " images in media/");
++   for (const auto& t : g_tables)
++      FrontendLog("   " + t.name + " -> " + (t.shot.empty() ? std::string("(no image)") : t.shot));
 +   const nlohmann::json state = LoadState();
 +   if (state.contains("view"))
 +      g_gridView = state.value("view", "list") == "grid";
@@ -3606,8 +3689,20 @@ index 0000000..d261967
 +   FillRR(x, y, w, h, 6, cPlaceholder);
 +   if (t.shot.empty())
 +      Text(x + w / 2, y, h, Tr("no screenshot"), 11, cLabel, false, 2);
++   else if (g_shotErrors.count(t.shot))
++      Text(x + w / 2, y, h, Tr("unreadable image"), 11, cWarn, false, 2);
 +   else
 +      Text(x + w / 2, y, h, Tr("loading..."), 11, cLabel, false, 2);
++}
++
++// what the details panel says about the screenshot: the file found, why it is not shown, or what name is expected
++std::string ShotNote(const Table& t)
++{
++   if (t.shot.empty())
++      return Tr("expected: media/") + t.name + ".jpg";
++   const auto err = g_shotErrors.find(t.shot);
++   const std::string base = t.shot.substr(t.shot.find_last_of('/') + 1);
++   return err != g_shotErrors.end() ? base + " (" + err->second + ")" : base;
 +}
 +
 +// ---- list view ----
@@ -3667,7 +3762,7 @@ index 0000000..d261967
 +   };
 +   std::string folder = t.dir;
 +   const Row rows[] = { { Tr("FILE"), t.name + ".vpx" }, { Tr("FOLDER"), folder }, { Tr("TIME PLAYED"), FmtTime(t.playSec) }, { Tr("LAST SESSION"), FmtLast(t.last) },
-+      { Tr("SCREENSHOT"), t.shot.empty() ? Tr("created when the table is closed") : Tr("ok (media/)") } };
++      { Tr("SCREENSHOT"), ShotNote(t) } };
 +   int y = 322;
 +   for (const Row& r : rows) {
 +      Text(874, y, 20, r.label, 10, cLabel, true);
@@ -3738,6 +3833,18 @@ index 0000000..d261967
 +   Text(240, 52, 44, Tr("VPNX options"), 20, cHi, true);
 +   Text(240, 96, 24, Tr("These apply to every table. The in-game menu (- key) adjusts the rest."), 12, cDim);
 +   Fill(240, 130, 800, 1, cLine);
++   // the last row is not an option: it opens the controls help
++   {
++      const int i = static_cast<int>(kOpts.size());
++      const int y = 146 + i * 46;
++      const bool selRow = i == sel;
++      FillRR(240, y, 800, 38, 5, selRow ? cSelBg : cBg);
++      if (selRow)
++         Fill(240, y, 3, 38, cAccent);
++      Text(258, y, 38, Tr("Controls help"), 14, selRow ? cSelText : cRow, selRow);
++      Text(1022, y, 38, ">", 14, selRow ? cSelText : cDim, true, 1);
++      Text(1000, y, 38, Tr("Open"), 13, selRow ? cSelText : cMid, selRow, 1);
++   }
 +   for (size_t i = 0; i < kOpts.size(); i++) {
 +      const OptDef& d = kOpts[i];
 +      const int y = 146 + static_cast<int>(i) * 46;
@@ -3755,6 +3862,57 @@ index 0000000..d261967
 +      Text(1000, y, 38, label, 13, selRow ? cSelText : cMid, selRow, 1);
 +      Text(1000 - TextWidth(label, 13, selRow) - 18, y, 38, "<", 14, selRow ? cSelText : cDim, true, 1);
 +   }
++}
++
++// ---- controls help: the buttons in the table and in the frontend ----
++struct HelpRow
++{
++   std::string keys; // buttons separated by spaces, one pill each
++   std::string text;
++};
++
++int HelpSection(int x, int y, int w, const std::string& title, const std::vector<HelpRow>& rows)
++{
++   Text(x + 16, y, 26, title, 15, cAccent, true);
++   Fill(x + 16, y + 28, w - 32, 1, cLine);
++   y += 36;
++   for (const HelpRow& r : rows) {
++      int gx = x + 16;
++      size_t p = 0;
++      while (p < r.keys.size()) {
++         const size_t q = r.keys.find(' ', p);
++         Glyph(gx, y + 4, r.keys.substr(p, q == std::string::npos ? std::string::npos : q - p), false);
++         gx += 3;
++         if (q == std::string::npos)
++            break;
++         p = q + 1;
++      }
++      Text(x + 150, y, 26, Tr(r.text), 13, cRow, false, 0, w - 166);
++      y += 27;
++   }
++   return y + 10;
++}
++
++void DrawHelp()
++{
++   Fill(0, 36, kW, 652, cBg);
++   Text(40, 44, 36, Tr("Controls help"), 20, cHi, true);
++   const int colW = 590, top = 90;
++   FillRR(40, top, colW, 580, 8, cChrome);
++   FillRR(40 + colW + 20, top, colW, 580, 8, cChrome);
++   int y = top + 14;
++   y = HelpSection(40, y, colW, Tr("In the table"),
++      { { "A", "Launch the ball" }, { "R-Stick", "Plunger: pull down and release" }, { "ZL L", "Left flipper" }, { "ZR R", "Right flipper" },
++        { "L-Stick", "Nudge the table" }, { "B", "Start the game" }, { "X", "Add a credit" }, { "-", "Open the in-game menu" },
++        { "+", "Close the table and go back" } });
++   HelpSection(40, y, colW, Tr("In the game menu (- key)"),
++      { { "D-pad", "Navigate the menu" }, { "A", "Confirm / increase the value" }, { "B", "Go back" }, { "X", "Cancel the pending changes" } });
++   y = top + 14;
++   y = HelpSection(40 + colW + 20, y, colW, Tr("In the frontend"),
++      { { "D-pad", "Move (also the left stick)" }, { "ZL ZR", "Previous / next page" }, { "L R", "Previous / next letter" }, { "A", "Play the table" },
++        { "X", "Toggle favorite" }, { "-", "Favorites only" }, { "Y", "List / grid" }, { "+", "Options and this help" }, { "B", "Quit" } });
++   y = HelpSection(40 + colW + 20, y, colW, "Ruma", { { "ZL ZR -", "With Ruma, hold these to return to Ruma" } });
++   Text(40 + colW + 20 + 16, y, 26, Tr("HOME always closes the app"), 13, cMid);
 +}
 +
 +// ---- splash (like Ruma's): the mark lights tile by tile in reading order, then the word and the line below fade in ----
@@ -4041,6 +4199,7 @@ index 0000000..d261967
 +         sel = static_cast<int>(i);
 +   int top = 0;
 +   bool inOptions = false;
++   bool inHelp = false;
 +   int optSel = 0;
 +   std::string chosen;
 +   std::string toast;
@@ -4056,20 +4215,31 @@ index 0000000..d261967
 +      const int n = static_cast<int>(g_vis.size());
 +      const int perPage = g_gridView ? kCols * kGridRows : kRows;
 +      int moved = 0;
-+      if (inOptions) {
++      const int optRows = static_cast<int>(kOpts.size()) + 1; // the options and, last, the controls help
++      if (inHelp) {
++         if (down & (HidNpadButton_B | HidNpadButton_A | HidNpadButton_Plus)) {
++            inHelp = false;
++            dirty = true;
++         }
++         down = 0;
++         held = 0;
++      } else if (inOptions) {
 +         if (down & (HidNpadButton_Down | HidNpadButton_StickLDown)) {
-+            optSel = (optSel + 1) % static_cast<int>(kOpts.size());
++            optSel = (optSel + 1) % optRows;
 +            dirty = true;
 +         }
 +         if (down & (HidNpadButton_Up | HidNpadButton_StickLUp)) {
-+            optSel = (optSel + static_cast<int>(kOpts.size()) - 1) % static_cast<int>(kOpts.size());
++            optSel = (optSel + optRows - 1) % optRows;
 +            dirty = true;
 +         }
 +         if (down & (HidNpadButton_Right | HidNpadButton_A)) {
-+            CycleOpt(kOpts[optSel], 1);
++            if (optSel == static_cast<int>(kOpts.size()))
++               inHelp = true;
++            else
++               CycleOpt(kOpts[optSel], 1);
 +            dirty = true;
 +         }
-+         if (down & HidNpadButton_Left) {
++         if ((down & HidNpadButton_Left) && optSel < static_cast<int>(kOpts.size())) {
 +            CycleOpt(kOpts[optSel], -1);
 +            dirty = true;
 +         }
@@ -4189,7 +4359,9 @@ index 0000000..d261967
 +         size_t favs = 0;
 +         for (const auto& t : g_tables)
 +            favs += t.fav ? 1 : 0;
-+         if (inOptions) {
++         if (inHelp) {
++            DrawHelp();
++         } else if (inOptions) {
 +            DrawOptions(optSel);
 +         } else if (g_tables.empty()) {
 +            Text(kW / 2, 300, 24, Tr("No tables found"), 20, cHi, true, 2);
@@ -4205,7 +4377,9 @@ index 0000000..d261967
 +         Header(g_tables.size(), docked ? std::string("DOCK · 1080p") : Tr("HANDHELD · 720p"), battery);
 +         char pos[48];
 +         snprintf(pos, sizeof pos, "%d / %d", g_vis.empty() ? 0 : sel + 1, n);
-+         if (inOptions)
++         if (inHelp)
++            Footer("", { { "B", Tr("Back") } });
++         else if (inOptions)
 +            Footer("", { { "B", Tr("Back") }, { "A", Tr("Change") } });
 +         else
 +            Footer(pos, { { "-", Tr(g_onlyFav ? "All" : "Favorites") }, { "L R", Tr("Letter") }, { "ZL ZR", Tr("Page") }, { "Y", Tr(g_gridView ? "List" : "Grid") },
