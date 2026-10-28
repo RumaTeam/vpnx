@@ -345,10 +345,27 @@ If you enjoyed this port, please consider [buying me a coffee](https://ko-fi.com
 
 ## License
 
-GPL-3.0, like Visual Pinball (the combined work links GPL code).
+**VPNX is free, open source software and is not sold.** It is released under the **GPL-3.0-or-later** (the text is in `LICENSE`),
+like Visual Pinball, whose code the player is built from. The Switch layer of this repository (the patches, `vpinball/switch/`,
+`compat/`, the build scripts, the docs and the brand files) is Copyright (c) 2026 RumaTeam under the same license. Our new source
+files carry `// license:GPLv3+`, the marker Visual Pinball uses. Anyone who receives the NRO is entitled to its source: every release
+points to the exact commit of this repository, and the upstream code is fetched at the commits pinned in `patches/`.
 
-The Switch layer of this repository is Copyright (c) 2026 RumaTeam, under the same license.
+The NRO is free and must stay free. The donation link (Ko-fi) is voluntary and unlocks nothing.
 
-Third-party parts: `vpinball/switch/forwarder.cpp` and `forwarder_structs.h` come from dolphin-nx (MPL-2.0, adapted; each file keeps
-its notice and stays under the MPL-2.0), and the forwarder payload in `forwarder/` derives from nx-hbloader (ISC, see
-`forwarder/LICENSE.md`). The source of those files has to stay available to whoever receives the NRO.
+What is combined into it, each part under its own license (see each project for the full text):
+
+| Component | License |
+|---|---|
+| Visual Pinball (player, renderer, physics, plugins incl. ScoreView) | GPL-3.0-or-later (a few inherited files keep the older "MAME-like" license noted in its `LICENSE`) |
+| PinMAME / libpinmame | BSD-3-Clause for the newer files; the inherited "old MAME" license for the rest: **free of charge, never sold**, and no distribution together with illegal ROM images |
+| libwinevbs (from Wine) | LGPL-2.1-or-later |
+| bgfx | BSD-2-Clause (the bgfx.cmake build files: CC0) |
+| SDL3, SDL3_image, SDL3_ttf | zlib |
+| libzip | BSD-3-Clause |
+| FreeImage | used under its GPLv3 option |
+| Mesa NVK / nxvk | MIT, with GPL-2.0-or-later parts |
+| `forwarder.cpp`, `forwarder_structs.h` (from dolphin-nx) | MPL-2.0, adapted; each file keeps its notice |
+| Forwarder payload (`forwarder/`, from nx-hbloader) | ISC, see `forwarder/LICENSE.md` |
+
+Because of the PinMAME terms, the project is free of charge and ships no ROMs (see the [Legal notice](#legal-notice)).

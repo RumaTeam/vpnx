@@ -3039,10 +3039,12 @@ index 0000000..cea5018
 +};
 diff --git a/switch/frontend.cpp b/switch/frontend.cpp
 new file mode 100644
-index 0000000..9bd78e8
+index 0000000..bae6c65
 --- /dev/null
 +++ b/switch/frontend.cpp
 @@ -0,0 +1,1382 @@
++// license:GPLv3+
++// Copyright (c) 2026 RumaTeam
 +// VPNX table browser (standalone mode). See frontend.h. Visual language and tokens: docs/VPNX_WIREFRAME.md (same skeleton as Ruma),
 +// reduced to what the VPNX needs: a list with a detail panel, a grid of screenshots, favourites and the time played.
 +#include "forwarder.h"
@@ -3117,7 +3119,7 @@ index 0000000..9bd78e8
 +   { "Single screen", "Tela única" }, { "As in the game menu", "Como no menu do jogo" }, { "On", "Ligado" }, { "Off", "Desligado" },
 +   { "Console clocks", "Clocks do console" }, { "Safe per mode (recommended)", "Seguro por modo (recomendado)" },
 +   { "Homebrew stock", "Originais do homebrew" }, { "Max GPU (test)", "GPU no máximo (teste)" }, { "Language", "Idioma" },
-+   { "Visual Pinball X on Nintendo Switch", "Visual Pinball X no Nintendo Switch" },
++   { "Virtual Pinball anywhere", "Pinball virtual em qualquer lugar" },
 +   { "unreadable image", "imagem ilegível" }, { "expected: media/", "esperado: media/" },
 +   // controls help
 +   { "Controls help", "Ajuda dos controles" }, { "Open", "Abrir" }, { "In the table", "Na mesa" }, { "In the game menu (- key)", "No menu do jogo (tecla -)" },
@@ -3131,7 +3133,6 @@ index 0000000..9bd78e8
 +   { "Move (also the left stick)", "Mover (também o analógico esquerdo)" }, { "Previous / next page", "Página anterior / próxima" },
 +   { "Previous / next letter", "Letra anterior / próxima" }, { "Play the table", "Jogar a mesa" }, { "Favorites only", "Só favoritas" },
 +   { "List / grid", "Lista / grade" }, { "Options and this help", "Opções e esta ajuda" },
-+   { "With Ruma, hold these to return to Ruma", "Com o Ruma, segure para voltar ao Ruma" },
 +   { "HOME always closes the app", "O botão HOME sempre fecha o app" },
 +   // applet-mode notice
 +   { "Open VPNX in Application mode", "Abrir o VPNX em modo Aplicação" },
@@ -3911,7 +3912,6 @@ index 0000000..9bd78e8
 +   y = HelpSection(40 + colW + 20, y, colW, Tr("In the frontend"),
 +      { { "D-pad", "Move (also the left stick)" }, { "ZL ZR", "Previous / next page" }, { "L R", "Previous / next letter" }, { "A", "Play the table" },
 +        { "X", "Toggle favorite" }, { "-", "Favorites only" }, { "Y", "List / grid" }, { "+", "Options and this help" }, { "B", "Quit" } });
-+   y = HelpSection(40 + colW + 20, y, colW, "Ruma", { { "ZL ZR -", "With Ruma, hold these to return to Ruma" } });
 +   Text(40 + colW + 20 + 16, y, 26, Tr("HOME always closes the app"), 13, cMid);
 +}
 +
@@ -3942,7 +3942,7 @@ index 0000000..9bd78e8
 +   };
 +   if (a > 0) {
 +      Text(x + markW + space, y, markH, "VPNX", 64, mix(cHi), true);
-+      Text(kW / 2, y + markH + 36, 24, Tr("Visual Pinball X on Nintendo Switch"), 15, mix(cDim), false, 2);
++      Text(kW / 2, y + markH + 36, 24, Tr("Virtual Pinball anywhere"), 15, mix(cDim), false, 2);
 +   }
 +}
 +
@@ -4427,10 +4427,12 @@ index 0000000..9bd78e8
 +}
 diff --git a/switch/frontend.h b/switch/frontend.h
 new file mode 100644
-index 0000000..b27e588
+index 0000000..5a8674c
 --- /dev/null
 +++ b/switch/frontend.h
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,21 @@
++// license:GPLv3+
++// Copyright (c) 2026 RumaTeam
 +// The VPNX table browser used when the app is started without Ruma: a list / grid of the .vpx tables with their screenshot.
 +// Drawn in software straight into the libnx framebuffer (no GL, no SDL video): the player's Vulkan stack cannot share the
 +// process with Mesa's GL, and the framebuffer is released before the player takes the window.
@@ -4452,10 +4454,12 @@ index 0000000..b27e588
 +const char* FrontendTr(const char* english);
 diff --git a/switch/main.cpp b/switch/main.cpp
 new file mode 100644
-index 0000000..2ad8713
+index 0000000..dcb0ba2
 --- /dev/null
 +++ b/switch/main.cpp
-@@ -0,0 +1,764 @@
+@@ -0,0 +1,766 @@
++// license:GPLv3+
++// Copyright (c) 2026 RumaTeam
 +// Nintendo Switch (libnx) shell for libvpinball: the platform layer that iOS/Android provide in
 +// Swift/Kotlin. It initialises the library, loads a table from the SD card and plays it.
 +//

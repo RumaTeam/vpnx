@@ -1,3 +1,5 @@
+// license:GPLv3+
+// Copyright (c) 2026 RumaTeam
 // EGL stubs for the Vulkan variant of the app. The static SDL3 of devkitPro has an EGL video backend (SDL_egl.c) that is
 // compiled in but never used here: the window is created without SDL_WINDOW_OPENGL and bgfx talks to the NWindow through
 // Vulkan. Without Mesa's EGL in the link (it cannot share a binary with nxvk, both embed Mesa's util code) these symbols would

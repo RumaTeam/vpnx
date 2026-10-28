@@ -1,3 +1,5 @@
+// license:GPLv3+
+// Copyright (c) 2026 RumaTeam
 // Small libc gaps between newlib (devkitA64/libnx) and what the ported libraries expect.
 // Shared by the test apps and, later, the vpinball port.
 #include <errno.h>
